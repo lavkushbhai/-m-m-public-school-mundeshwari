@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 12th – mathematics (Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  //1
+  { q: "यदि A = {1,2} और B = {3,4} तो A × B में कितने अवयव होंगे?", o: ["2", "3", "4", "5"], a: 2 },
+  //2
+  { q: "यदि n(A)=3 और n(B)=4 हो, तो n(A×B) क्या होगा?", o: ["7", "12", "24", "1"], a: 1 },
+  //3
+  { q: "|A| = 5 का अर्थ क्या है?", o: ["A के उपसमुच्चय", "A के अवयवों की संख्या", "A खाली है", "A अनंत है"], a: 1 },
+  //4
+  { q: "यदि f(x)=x² हो तो f(3) का मान क्या होगा?", o: ["6", "9", "3", "12"], a: 1 },
+  //5
+  { q: "यदि f(x)=2x+1 हो तो f(0) = ?", o: ["0", "1", "2", "-1"], a: 1 },
+  
+  //6
+  { q: "समुच्चय { } को क्या कहते हैं?", o: ["एकल समुच्चय", "रिक्त समुच्चय", "सार्वत्रिक", "सीमित"], a: 1 },
+  //7
+  { q: "sin 30° का मान क्या है?", o: ["1", "√3/2", "1/2", "0"], a: 2 },
+  //8
+  { q: "cos 0° का मान क्या है?", o: ["0", "1", "1/2", "√3/2"], a: 1 },
+  //9
+  { q: "tan 45° का मान क्या है?", o: ["0", "1", "√3", "1/√3"], a: 1 },
+  //10
+  { q: "sin²θ + cos²θ = ?", o: ["0", "1", "2", "θ"], a: 1 },
+  
+  //11
+  { q: "यदि z = 3 + 4i हो तो |z| = ?", o: ["5", "7", "1", "25"], a: 0 },
+  //12
+  { q: "i² का मान क्या है?", o: ["1", "-1", "i", "-i"], a: 1 },
+  //13
+  { q: "यदि z = a+ib हो तो इसका वास्तविक भाग क्या है?", o: ["b", "ib", "a", "i"], a: 2 },
+  //14
+  { q: "यदि z = 2−3i हो तो उसका संयुग्मी क्या होगा?", o: ["2+3i", "-2+3i", "3+2i", "-3+2i"], a: 0 },
+  //15
+  { q: "दो सम्मिश्र संख्याएँ बराबर होंगी जब?", o: ["काल्पनिक भाग बराबर", "वास्तविक भाग बराबर", "दोनों भाग बराबर", "कोई भी"], a: 2 },
+  
+  //16
+  { q: "dx/dy का अर्थ क्या है?", o: ["y का x के सापेक्ष अवकलन", "x का y के सापेक्ष अवकलन", "समाकलन", "सीमा"], a: 1 },
+  //17
+  { q: "d/dx (x²) = ?", o: ["2x", "x", "x³", "2"], a: 0 },
+  //18
+  { q: "d/dx (sin x) = ?", o: ["cos x", "-cos x", "sin x", "-sin x"], a: 0 },
+  //19
+  { q: "d/dx (e^x) = ?", o: ["e^x", "xe^x", "1", "0"], a: 0 },
+  //20
+  { q: "d/dx (constant) = ?", o: ["1", "0", "x", "∞"], a: 1 },
+  
+  //21
+  { q: "∫ dx = ?", o: ["x", "1", "x + C", "C"], a: 2 },
+  //22
+  { q: "∫ x dx = ?", o: ["x²", "x²/2 + C", "2x", "x + C"], a: 1 },
+  //23
+  { q: "∫ cos x dx = ?", o: ["sin x + C", "-sin x + C", "cos x", "tan x"], a: 0 },
+  //24
+  { q: "∫ e^x dx = ?", o: ["e^x", "e^x + C", "x e^x", "1"], a: 1 },
+  //25
+  { q: "समाकलन अवकलन का क्या है?", o: ["विपरीत", "समान", "भाग", "गुणा"], a: 0 },
+  
+  //26
+  { q: "रेखीय समीकरण ax+by+c=0 में a,b क्या हैं?", o: ["चर", "स्थिरांक", "मूल", "घात"], a: 1 },
+  //27
+  { q: "यदि x+y=5 और x−y=1 तो x = ?", o: ["2", "3", "4", "1"], a: 1 },
+  //28
+  { q: "दो रेखाएँ समांतर होंगी यदि?", o: ["ढाल समान", "अवरोध समान", "बिंदु समान", "समीकरण समान"], a: 0 },
+  //29
+  { q: "वृत्त का सामान्य समीकरण क्या है?", o: ["x²+y²+r²=0", "x²+y²=0", "x²+y²+2gx+2fy+c=0", "xy=0"], a: 2 },
+  //30
+  { q: "वृत्त का केंद्र क्या दर्शाता है?", o: ["त्रिज्या", "मध्य बिंदु", "क्षेत्रफल", "व्यास"], a: 1 },
+  
+  //31
+  { q: "प्रायिकता का मान कितना होता है?", o: ["0 से 1 के बीच", "1 से 2", "ऋणात्मक", "अनंत"], a: 0 },
+  //32
+  { q: "असंभव घटना की प्रायिकता क्या है?", o: ["1", "0", "1/2", "-1"], a: 1 },
+  //33
+  { q: "निश्चित घटना की प्रायिकता क्या है?", o: ["0", "1", "1/2", "∞"], a: 1 },
+  //34
+  { q: "P(A) + P(not A) = ?", o: ["0", "1", "2", "A"], a: 1 },
+  //35
+  { q: "यदि एक सिक्का उछाला जाए तो हेड आने की प्रायिकता?", o: ["1", "1/2", "0", "2"], a: 1 },
+  
+  //36
+  { q: "आव्यूह (Matrix) का क्रम क्या दर्शाता है?", o: ["पंक्ति × स्तंभ", "स्तंभ × पंक्ति", "केवल पंक्ति", "केवल स्तंभ"], a: 0 },
+  //37
+  { q: "यदि A एक 2×2 आव्यूह है तो उसमें कितने अवयव होंगे?", o: ["2", "4", "6", "8"], a: 1 },
+  //38
+  { q: "आव्यूह का सारणिक किसके लिए परिभाषित है?", o: ["केवल वर्ग आव्यूह", "आयताकार", "शून्य", "सभी"], a: 0 },
+  //39
+  { q: "यदि |A| = 0 हो तो A क्या कहलाता है?", o: ["असंगुल", "सिंगुलर", "यूनिट", "शून्य"], a: 1 },
+  //40
+  { q: "यूनिट आव्यूह का विकर्ण अवयव क्या होते हैं?", o: ["0", "1", "2", "-1"], a: 1 },
+  
+  //41
+  { q: "अनुक्रम का nवाँ पद क्या कहलाता है?", o: ["सामान्य पद", "मध्य पद", "अंतिम पद", "प्रथम पद"], a: 0 },
+  //42
+  { q: "AP का सामान्य पद क्या होता है?", o: ["a+(n−1)d", "a+nd", "nd", "a−d"], a: 0 },
+  //43
+  { q: "AP में d क्या दर्शाता है?", o: ["प्रथम पद", "अंतर", "योग", "संख्या"], a: 1 },
+  //44
+  { q: "GP का प्रथम पद क्या कहलाता है?", o: ["a", "r", "n", "d"], a: 0 },
+  //45
+  { q: "GP का सामान्य अनुपात क्या कहलाता है?", o: ["a", "r", "d", "n"], a: 1 },
+  
+  //46
+  { q: "त्रिविमीय ज्यामिति में बिंदु के निर्देशांक कितने होते हैं?", o: ["1", "2", "3", "4"], a: 2 },
+  //47
+  { q: "दूरी सूत्र किसके लिए प्रयुक्त होता है?", o: ["बिंदु", "रेखा", "वृत्त", "समतल"], a: 0 },
+  //48
+  { q: "दो बिंदुओं के बीच दूरी सदैव कैसी होती है?", o: ["ऋणात्मक", "धनात्मक", "शून्य", "अनंत"], a: 1 },
+  //49
+  { q: "दिशा अनुपात किसके लिए होते हैं?", o: ["रेखा", "वृत्त", "त्रिभुज", "समुच्चय"], a: 0 },
+  //50
+  { q: "वेक्टर का परिमाण क्या दर्शाता है?", o: ["दिशा", "लंबाई", "आकार", "कोण"], a: 1 }
+];
+
+console.log(questions.length); // ✅ 50 (पक्का)
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

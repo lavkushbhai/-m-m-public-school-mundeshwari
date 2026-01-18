@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Feedback Dashboard</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,sans-serif;
+  background:#eef2f7;
+}
+
+/* HEADER */
+.header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#1e88e5;
+  color:#fff;
+  padding:14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:17px;
+  font-weight:700;
+}
+.header .back{
+  cursor:pointer;
+  font-size:15px;
+}
+
+/* FILTER */
+.filter{
+  display:flex;
+  gap:8px;
+  padding:10px;
+}
+.filter button{
+  flex:1;
+  padding:8px;
+  border:none;
+  border-radius:12px;
+  background:#e3f2fd;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* CONTAINER */
+.container{padding:14px}
+
+/* CARD */
+.fb-card{
+  background:#fff;
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:16px;
+  box-shadow:0 12px 30px rgba(0,0,0,.2);
+}
+
+.fb-name{font-weight:700;color:#1e88e5}
+.fb-mobile{font-size:13px;color:#555}
+.fb-time{font-size:11px;color:#777}
+.fb-msg{margin-top:8px;font-size:14px}
+
+/* ⭐ RATING */
+.rating{
+  margin-top:6px;
+  font-size:18px;
+  color:#f9a825;
+  font-weight:700;
+}
+.no-rating{
+  font-size:13px;
+  color:#777;
+  margin-top:4px;
+}
+
+/* IMAGE */
+.fb-img{
+  width:100%;
+  margin-top:10px;
+  border-radius:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+}
+.no-img{
+  margin-top:8px;
+  padding:8px;
+  border-radius:12px;
+  background:#f1f1f1;
+  color:#777;
+  font-size:13px;
+}
+
+/* REPLY */
+.reply-box textarea{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #ccc;
+}
+.reply-box button{
+  margin-top:6px;
+  padding:8px;
+  border:none;
+  border-radius:12px;
+  background:#1e88e5;
+  color:#fff;
+  font-weight:700;
+}
+
+/* ADMIN REPLY */
+.admin-reply{
+  margin-top:10px;
+  padding:10px;
+  border-radius:14px;
+  background:#e8f5e9;
+  color:#1b5e20;
+  font-weight:600;
+}
+
+/* ACTIONS */
+.actions{
+  display:flex;
+  gap:8px;
+  margin-top:6px;
+}
+.actions button{
+  flex:1;
+  padding:6px;
+  border:none;
+  border-radius:10px;
+  font-size:12px;
+}
+.edit{background:#ffca28}
+.delete{background:#e53935;color:#fff}
+
+/* TOAST */
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#323232;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:14px;
+  display:none;
+  z-index:999;
+}
+
+/* CONFIRM POPUP */
+.confirm{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+.confirm-box{
+  background:#fff;
+  padding:18px;
+  border-radius:18px;
+  width:90%;
+  max-width:300px;
+  text-align:center;
+  box-shadow:0 20px 45px rgba(0,0,0,.35);
+}
+.confirm-actions{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
+.confirm-actions button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  font-weight:700;
+}
+.yes{background:#e53935;color:#fff}
+.no{background:#e0e0e0}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <span class="back" onclick="goBack()">⬅ Back</span>
+  <span>📝 Admin Feedback Dashboard</span>
+  <span></span>
+</div>
+
+<div class="filter">
+  <button onclick="loadAll()">All</button>
+  <button onclick="loadReplied()">Replied</button>
+  <button onclick="loadPending()">Not Replied</button>
+</div>
+
+<div class="container" id="list"></div>
+
+<div class="toast" id="toast"></div>
+
+<div class="confirm" id="confirmBox">
+  <div class="confirm-box">
+    <p>Do you want to delete?</p>
+    <div class="confirm-actions">
+      <button class="no" onclick="closeConfirm()">No</button>
+      <button class="yes" onclick="confirmDelete()">Yes</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { db, ref, onValue, update, remove } from "./firebase.js";
+
+const listBox=document.getElementById("list");
+const toast=document.getElementById("toast");
+const confirmBox=document.getElementById("confirmBox");
+
+let allData=[];
+let deleteAction=null;
+
+/* TOAST */
+function showToast(msg){
+  toast.innerText=msg;
+  toast.style.display="block";
+  setTimeout(()=>toast.style.display="none",2500);
+}
+
+/* LOAD DATA */
+onValue(ref(db,"feedbacks"),snap=>{
+  allData=[];
+  snap.forEach(c=>{
+    allData.unshift({id:c.key,...c.val()});
+  });
+  render(allData);
+});
+
+/* RENDER */
+function render(data){
+  listBox.innerHTML="";
+  if(!data.length){
+    listBox.innerHTML="<p>कोई feedback उपलब्ध नहीं है</p>";
+    return;
+  }
+
+  data.forEach(f=>{
+    listBox.innerHTML+=`
+      <div class="fb-card">
+
+        <div class="fb-name">${f.name||"Student"}</div>
+        <div class="fb-mobile">${f.mobile||"Mobile नहीं दिया गया"}</div>
+        <div class="fb-time">${f.time||""}</div>
+
+        ${
+          f.rating
+          ? `<div class="rating">${"★".repeat(f.rating)}${"☆".repeat(5-f.rating)}</div>`
+          : `<div class="no-rating">⭐ Rating not given</div>`
+        }
+
+        <div class="fb-msg">${f.message||""}</div>
+
+        ${
+          f.image
+          ? `<img src="${f.image}" class="fb-img">`
+          : `<div class="no-img">📷 Image not uploaded</div>`
+        }
+
+        ${
+          f.adminReply
+          ? `
+            <div class="admin-reply">${f.adminReply}</div>
+            <div class="actions">
+              <button class="edit" onclick="editReply('${f.id}','${f.adminReply}')">Edit</button>
+              <button class="delete" onclick="askDelete('reply','${f.id}')">Delete Reply</button>
+            </div>
+          `
+          : `
+            <div class="reply-box">
+              <textarea id="r${f.id}" placeholder="Reply लिखें"></textarea>
+              <button onclick="saveReply('${f.id}')">Reply</button>
+            </div>
+          `
+        }
+
+        <div class="actions">
+          <button class="delete" onclick="askDelete('feedback','${f.id}')">
+            पूरा Feedback Delete
+          </button>
+        </div>
+
+      </div>
+    `;
+  });
+}
+
+/* ACTIONS */
+window.saveReply=(id)=>{
+  const t=document.getElementById("r"+id).value.trim();
+  if(!t) return showToast("Reply लिखना जरूरी है");
+  update(ref(db,"feedbacks/"+id),{adminReply:t});
+  showToast("Reply भेज दिया गया");
+};
+
+window.editReply=(id,old)=>{
+  const n=prompt("Reply edit करें",old);
+  if(n){
+    update(ref(db,"feedbacks/"+id),{adminReply:n});
+    showToast("Reply update हो गया");
+  }
+};
+
+/* CONFIRM DELETE */
+window.askDelete=(type,id)=>{
+  deleteAction={type,id};
+  confirmBox.style.display="flex";
+};
+window.closeConfirm=()=>{
+  confirmBox.style.display="none";
+  deleteAction=null;
+};
+window.confirmDelete=()=>{
+  if(deleteAction.type==="reply"){
+    update(ref(db,"feedbacks/"+deleteAction.id),{adminReply:null});
+    showToast("Reply delete हो गया");
+  }else{
+    remove(ref(db,"feedbacks/"+deleteAction.id));
+    showToast("Feedback delete हो गया");
+  }
+  closeConfirm();
+};
+
+/* FILTER */
+window.loadAll=()=>render(allData);
+window.loadReplied=()=>render(allData.filter(f=>f.adminReply));
+window.loadPending=()=>render(allData.filter(f=>!f.adminReply));
+
+/* BACK */
+window.goBack=()=>location.href="admin-dashboard.html";
+</script>
+
+</body>
+</html>

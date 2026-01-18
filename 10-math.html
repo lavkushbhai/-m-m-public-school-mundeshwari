@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 10th – mathematics(Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  
+  /* ===== वास्तविक संख्याएँ ===== */
+  { q: "306 और 657 का HCF (महत्तम समापवर्तक) है:", o: ["9", "18", "27", "36"], a: 2 },
+  { q: "12 और 18 का LCM (लघुत्तम समापवर्त्य) है:", o: ["24", "36", "48", "72"], a: 1 },
+  { q: "निम्न में से कौन अपरिमेय संख्या है?", o: ["2", "4", "√2", "6"], a: 2 },
+  { q: "यदि HCF = 1 हो तो संख्याएँ कहलाती हैं:", o: ["सम संख्याएँ", "अभाज्य", "सह अभाज्य", "विषम"], a: 2 },
+  
+  /* ===== बहुपद ===== */
+  { q: "बहुपद 3x² + 2x + 1 की घात है:", o: ["1", "2", "3", "0"], a: 1 },
+  { q: "बहुपद x − 5 का शून्यक है:", o: ["5", "-5", "0", "1"], a: 0 },
+  { q: "यदि बहुपद के दो शून्यक हों तो उसकी घात होगी:", o: ["1", "2", "3", "4"], a: 1 },
+  
+  /* ===== दो चरों वाले रैखिक समीकरण ===== */
+  { q: "दो चरों वाले रैखिक समीकरण का ग्राफ होता है:", o: ["बिंदु", "रेखा", "वृत्त", "त्रिभुज"], a: 1 },
+  { q: "यदि रेखाएँ समानांतर हों तो हल होगा:", o: ["एक", "दो", "कोई नहीं", "अनंत"], a: 2 },
+  
+  /* ===== द्विघात समीकरण ===== */
+  { q: "द्विघात समीकरण का मानक रूप है:", o: ["ax²+bx+c=0", "ax+b=0", "x²=a", "ax³+bx²=0"], a: 0 },
+  { q: "x² − 4x + 4 = 0 का विवर्तक (D) है:", o: ["0", "4", "8", "16"], a: 0 },
+  { q: "यदि D < 0 हो तो मूल होंगे:", o: ["वास्तविक", "बराबर", "अवास्तविक", "पूर्णांक"], a: 2 },
+  
+  /* ===== समान्तर श्रेणी (AP) ===== */
+  { q: "AP का सामान्य पद है:", o: ["a+nd", "a+(n−1)d", "nd", "a+d"], a: 1 },
+  { q: "AP 2,4,6,… का 10वाँ पद है:", o: ["18", "20", "22", "24"], a: 1 },
+  { q: "AP का प्रथम पद कहलाता है:", o: ["a", "d", "n", "l"], a: 0 },
+  
+  /* ===== त्रिभुज ===== */
+  { q: "दो त्रिभुज समरूप होते हैं यदि:", o: ["कोण बराबर हों", "भुजाएँ बराबर हों", "क्षेत्रफल बराबर हो", "परिमाप बराबर हो"], a: 0 },
+  { q: "समरूप त्रिभुजों के क्षेत्रफलों का अनुपात होता है:", o: ["भुजाओं का अनुपात", "भुजाओं के अनुपात का वर्ग", "भुजाओं का योग", "अंतर"], a: 1 },
+  
+  /* ===== निर्देशांक ज्यामिति ===== */
+  { q: "बिंदुओं (0,0) और (3,4) के बीच दूरी है:", o: ["5", "6", "7", "4"], a: 0 },
+  { q: "(2,2) और (4,4) का मध्य बिंदु है:", o: ["(3,3)", "(2,4)", "(4,2)", "(6,6)"], a: 0 },
+  
+  /* ===== त्रिकोणमिति ===== */
+  { q: "sin 30° का मान है:", o: ["1", "1/2", "√3/2", "0"], a: 1 },
+  { q: "cos 60° का मान है:", o: ["1", "0", "1/2", "√3/2"], a: 2 },
+  { q: "tan 45° का मान है:", o: ["0", "1", "√3", "1/√3"], a: 1 },
+  { q: "sin²A + cos²A का मान है:", o: ["0", "1", "2", "A पर निर्भर"], a: 1 },
+  
+  /* ===== ऊँचाई और दूरी ===== */
+  { q: "उन्नयन कोण मापा जाता है:", o: ["क्षैतिज से", "ऊर्ध्व से", "वस्तु से", "भूमि से"], a: 0 },
+  
+  /* ===== वृत्त ===== */
+  { q: "स्पर्श बिंदु पर त्रिज्या होती है:", o: ["समांतर", "लंबवत", "बराबर", "स्पर्श"], a: 1 },
+  { q: "बाह्य बिंदु से खींची जा सकने वाली स्पर्श रेखाओं की संख्या:", o: ["1", "2", "3", "4"], a: 1 },
+  
+  /* ===== वृत्त से संबंधित क्षेत्रफल ===== */
+  { q: "वृत्त का क्षेत्रफल सूत्र है:", o: ["2πr", "πr²", "πd", "r²"], a: 1 },
+  { q: "वृत्त की परिधि का सूत्र है:", o: ["πr²", "2πr", "πd²", "r"], a: 1 },
+  
+  /* ===== पृष्ठीय क्षेत्रफल और आयतन ===== */
+  { q: "भुजा a वाले घन का आयतन है:", o: ["a²", "6a²", "a³", "3a"], a: 2 },
+  { q: "बेलन का वक्र पृष्ठीय क्षेत्रफल है:", o: ["2πr²", "2πrh", "πr²h", "πrh"], a: 1 },
+  
+  /* ===== सांख्यिकी ===== */
+  { q: "समूहित आँकड़ों का औसत कहलाता है:", o: ["माध्य", "माध्यिका", "बहुलक", "परास"], a: 0 },
+  { q: "संचयी आवृत्ति ग्राफ कहलाता है:", o: ["बार ग्राफ", "हिस्टोग्राम", "ओजाइव", "पाई चार्ट"], a: 2 },
+  
+  /* ===== प्रायिकता ===== */
+  { q: "निश्चित घटना की प्रायिकता होती है:", o: ["0", "1", "1/2", "-1"], a: 1 },
+  { q: "प्रायिकता का मान होता है:", o: ["0 से 1 के बीच", "-1 से 1", "1 से 2", "0 से 2"], a: 0 },
+  { q: "सिक्का उछालने पर कुल संभावित परिणाम:", o: ["1", "2", "3", "4"], a: 1 },
+  
+  /* ===== मिश्रित ===== */
+  { q: "यदि a = 3 हो तो a² + 2a का मान है:", o: ["12", "15", "18", "21"], a: 1 },
+  { q: "निम्न में से कौन परिमेय नहीं है?", o: ["1/2", "3/4", "√5", "5"], a: 2 },
+  { q: "यदि क्षेत्रफल 4 गुना हो जाए तो भुजा होगी:", o: ["2 गुना", "3 गुना", "4 गुना", "8 गुना"], a: 0 }
+  
+];
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

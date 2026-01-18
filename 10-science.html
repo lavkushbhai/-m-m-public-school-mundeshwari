@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 10th – science (offline test) </p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  
+  /* 1–10 */
+  { q: "पौधे भोजन कैसे बनाते हैं?", o: ["श्वसन", "प्रकाश संश्लेषण", "अपघटन", "वाष्पन"], a: 1 },
+  { q: "जल का रासायनिक सूत्र क्या है?", o: ["H2O", "CO2", "O2", "H2"], a: 0 },
+  { q: "मानव शरीर में कितनी हड्डियाँ होती हैं?", o: ["206", "210", "201", "215"], a: 0 },
+  { q: "सबसे हल्की गैस कौन सी है?", o: ["ऑक्सीजन", "नाइट्रोजन", "हाइड्रोजन", "हीलियम"], a: 2 },
+  { q: "रक्त का लाल रंग किस कारण होता है?", o: ["प्लाज्मा", "हीमोग्लोबिन", "प्लेटलेट", "WBC"], a: 1 },
+  { q: "ऊर्जा का SI मात्रक क्या है?", o: ["वाट", "न्यूटन", "जूल", "एम्पियर"], a: 2 },
+  { q: "ध्वनि की चाल सबसे अधिक किसमें होती है?", o: ["वायु", "जल", "ठोस", "निर्वात"], a: 2 },
+  { q: "मानव हृदय में कितने कक्ष होते हैं?", o: ["2", "3", "4", "5"], a: 2 },
+  { q: "कौन सा अम्ल पेट में पाया जाता है?", o: ["सल्फ्यूरिक", "नाइट्रिक", "हाइड्रोक्लोरिक", "एसीटिक"], a: 2 },
+  { q: "पृथ्वी पर जीवन के लिए सबसे आवश्यक गैस कौन सी है?", o: ["CO2", "ऑक्सीजन", "हाइड्रोजन", "नाइट्रोजन"], a: 1 },
+  
+  /* 11–20 */
+  { q: "मानव आँख का कौन सा भाग रंग पहचानता है?", o: ["पुतली", "रेटिना", "लेंस", "कॉर्निया"], a: 1 },
+  { q: "चुंबक के कितने ध्रुव होते हैं?", o: ["1", "2", "3", "4"], a: 1 },
+  { q: "विद्युत धारा का SI मात्रक क्या है?", o: ["वोल्ट", "ओम", "एम्पियर", "वाट"], a: 2 },
+  { q: "पौधों में जल का परिवहन किससे होता है?", o: ["फ्लोएम", "जाइलम", "कॉर्टेक्स", "स्टोमाटा"], a: 1 },
+  { q: "श्वसन की क्रिया कहाँ होती है?", o: ["हृदय", "फेफड़े", "यकृत", "गुर्दा"], a: 1 },
+  { q: "मानव शरीर का तापमान कितना होता है?", o: ["35°C", "36°C", "37°C", "38°C"], a: 2 },
+  { q: "ओजोन परत कहाँ पाई जाती है?", o: ["क्षोभमंडल", "समताप मंडल", "आयन मंडल", "मध्य मंडल"], a: 1 },
+  { q: "सबसे कठोर प्राकृतिक पदार्थ कौन सा है?", o: ["लोहा", "हीरा", "सोना", "चाँदी"], a: 1 },
+  { q: "धातु की चमक को क्या कहते हैं?", o: ["लचीलापन", "तन्यता", "चमक", "कठोरता"], a: 2 },
+  { q: "मनुष्य में सबसे बड़ी हड्डी कौन सी है?", o: ["रीढ़", "खोपड़ी", "जांघ की हड्डी", "भुजा"], a: 2 },
+  
+  /* 21–30 */
+  { q: "प्रकाश का वेग निर्वात में कितना होता है?", o: ["3×10⁸ m/s", "3×10⁶ m/s", "3×10⁵ m/s", "3×10⁷ m/s"], a: 0 },
+  { q: "रक्त का थक्का बनाने में कौन सहायक है?", o: ["RBC", "WBC", "प्लेटलेट", "प्लाज्मा"], a: 2 },
+  { q: "CO₂ का उपयोग पौधे किस क्रिया में करते हैं?", o: ["श्वसन", "प्रकाश संश्लेषण", "अपघटन", "वाष्पन"], a: 1 },
+  { q: "ध्वनि को मापने की इकाई क्या है?", o: ["हर्ट्ज", "डेसिबल", "वाट", "जूल"], a: 1 },
+  { q: "मानव शरीर का नियंत्रण केंद्र कौन है?", o: ["हृदय", "मस्तिष्क", "फेफड़े", "यकृत"], a: 1 },
+  { q: "सबसे भारी गैस कौन सी है?", o: ["ऑक्सीजन", "कार्बन डाइऑक्साइड", "हाइड्रोजन", "हीलियम"], a: 1 },
+  { q: "पौधों में गैसों का आदान-प्रदान कहाँ से होता है?", o: ["जाइलम", "फ्लोएम", "स्टोमाटा", "जड़"], a: 2 },
+  { q: "अम्ल और क्षार की पहचान के लिए किसका प्रयोग होता है?", o: ["थर्मामीटर", "सूचक", "मीटर", "तुला"], a: 1 },
+  { q: "विद्युत बल्ब में कौन सी गैस भरी जाती है?", o: ["ऑक्सीजन", "हाइड्रोजन", "आर्गन", "नाइट्रोजन"], a: 2 },
+  { q: "लौह पर जंग लगने की प्रक्रिया क्या कहलाती है?", o: ["ऑक्सीकरण", "अपचयन", "संक्षारण", "उत्प्रेरण"], a: 2 },
+  
+  /* 31–40 */
+  { q: "मानव शरीर में पाचन कहाँ शुरू होता है?", o: ["आमाशय", "मुख", "आंत", "यकृत"], a: 1 },
+  { q: "वायु में नमी को क्या कहते हैं?", o: ["घनत्व", "आर्द्रता", "दाब", "ताप"], a: 1 },
+  { q: "कौन सा धातु तरल अवस्था में पाया जाता है?", o: ["लोहा", "पारा", "एल्यूमिनियम", "तांबा"], a: 1 },
+  { q: "इलेक्ट्रॉन का आवेश कैसा होता है?", o: ["धनात्मक", "ऋणात्मक", "शून्य", "दोनों"], a: 1 },
+  { q: "मानव रक्त का pH लगभग कितना होता है?", o: ["5", "6", "7.4", "8"], a: 2 },
+  { q: "सूर्य से ऊर्जा पृथ्वी तक कैसे आती है?", o: ["चालन", "संवहन", "विकिरण", "परावर्तन"], a: 2 },
+  { q: "मानव शरीर में सबसे अधिक जल किसमें होता है?", o: ["हड्डी", "मांसपेशी", "रक्त", "त्वचा"], a: 1 },
+  { q: "हृदय की धड़कन नियंत्रित कौन करता है?", o: ["मस्तिष्क", "पेसमेकर", "फेफड़े", "धमनी"], a: 1 },
+  { q: "नाइट्रोजन का मुख्य उपयोग क्या है?", o: ["श्वसन", "उर्वरक", "ईंधन", "औषधि"], a: 1 },
+  { q: "सबसे तेज चलने वाला ग्रह कौन सा है?", o: ["पृथ्वी", "मंगल", "बुध", "शुक्र"], a: 2 },
+  
+  /* 41–50 */
+  { q: "मानव कान का कौन सा भाग संतुलन बनाए रखता है?", o: ["कर्णपटल", "कॉक्लिया", "अर्धवृत्ताकार नलिका", "यूस्टेशियन नली"], a: 2 },
+  { q: "चुंबकीय क्षेत्र की इकाई क्या है?", o: ["टेस्ला", "न्यूटन", "वोल्ट", "एम्पियर"], a: 0 },
+  { q: "पौधों में भोजन का परिवहन किससे होता है?", o: ["जाइलम", "फ्लोएम", "जड़", "पत्ती"], a: 1 },
+  { q: "ध्वनि तरंगें किस प्रकार की तरंगें हैं?", o: ["अनुप्रस्थ", "अनुदैर्ध्य", "दोनों", "कोई नहीं"], a: 1 },
+  { q: "मानव शरीर में ऑक्सीजन का परिवहन कौन करता है?", o: ["प्लाज्मा", "WBC", "हीमोग्लोबिन", "प्लेटलेट"], a: 2 },
+  { q: "ऊर्जा संरक्षण का नियम किसने दिया?", o: ["न्यूटन", "आइंस्टीन", "जूल", "लावोज़ियर"], a: 3 },
+  { q: "पृथ्वी का सबसे बाहरी मंडल कौन सा है?", o: ["क्षोभ", "समताप", "मध्य", "आयन"], a: 3 },
+  { q: "दूध का pH लगभग कितना होता है?", o: ["5.5", "6.5", "7", "8"], a: 1 },
+  { q: "सबसे अच्छा विद्युत चालक कौन है?", o: ["लोहा", "तांबा", "एल्युमिनियम", "चाँदी"], a: 3 },
+  { q: "मानव शरीर में रक्त को शुद्ध कौन करता है?", o: ["हृदय", "फेफड़े", "गुर्दा", "यकृत"], a: 2 }
+  
+];
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

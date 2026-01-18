@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Notification Panel</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,sans-serif;
+  background:#eef2f7;
+}
+
+.page{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  padding:14px;
+}
+
+.admin-box{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 18px 45px rgba(0,0,0,.25);
+}
+
+.admin-box h2{
+  margin:0 0 12px;
+  text-align:center;
+  color:#1e88e5;
+}
+
+/* INPUT */
+.admin-box input[type="text"]{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #d0d7de;
+  font-size:15px;
+}
+
+/* IMPORTANT */
+.imp-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:10px 0;
+  font-size:14px;
+}
+.imp-row input{
+  accent-color:#e53935;
+}
+
+/* SEND */
+.send-btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* FILTER */
+select{
+  width:100%;
+  margin-top:12px;
+  padding:10px;
+  border-radius:12px;
+  border:1px solid #ccc;
+  font-weight:600;
+}
+
+/* LIST */
+.list{
+  margin-top:16px;
+  max-height:55vh;
+  overflow-y:auto;
+}
+
+/* CARD */
+.card{
+  background:#f9fafb;
+  padding:12px;
+  border-radius:16px;
+  margin-bottom:12px;
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
+}
+
+.card.important{
+  border-left:5px solid #e53935;
+  background:#fff5f5;
+}
+
+.card b{
+  font-size:14px;
+}
+.card small{
+  color:#6b7280;
+  font-size:11px;
+}
+
+/* ACTIONS */
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.actions button{
+  flex:1;
+  border:none;
+  padding:10px;
+  border-radius:14px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.edit{background:#fbbf24}
+.delete{background:#ef4444;color:#fff}
+
+/* CONFIRM */
+.confirm{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.confirm-box{
+  background:#fff;
+  padding:16px;
+  border-radius:18px;
+  width:90%;
+  max-width:320px;
+  text-align:center;
+}
+
+.confirm-actions{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+
+.confirm-actions button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:14px;
+  font-weight:700;
+}
+
+.cancel{background:#e5e7eb}
+.danger{background:#ef4444;color:#fff}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+  <div class="admin-box">
+
+    <h2>🔔 Admin Notifications</h2>
+
+    <input id="text" type="text" placeholder="Enter notification message">
+
+    <div class="imp-row">
+      <input type="checkbox" id="importantChk">
+      <label>Mark as Important</label>
+    </div>
+
+    <button class="send-btn" onclick="send()">Send Notification</button>
+
+    <!-- FILTER -->
+    <select id="filterSelect">
+      <option value="all">All Notifications</option>
+      <option value="important">Important Only</option>
+      <option value="normal">Normal Only</option>
+      <option value="seen">Seen</option>
+      <option value="unseen">Unseen</option>
+    </select>
+
+    <div class="list" id="list"></div>
+
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="confirm" id="confirm">
+  <div class="confirm-box">
+    <p>Delete this notification?</p>
+    <div class="confirm-actions">
+      <button class="cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { db, ref, push, onValue, remove, update } from "./firebase.js";
+
+const notifyRef = ref(db,"notifications");
+let editKey=null;
+let deleteKey=null;
+let allData=[];
+
+/* SEND */
+window.send=()=>{
+  const text=document.getElementById("text");
+  const important=document.getElementById("importantChk").checked;
+  if(!text.value.trim()) return;
+
+  if(editKey){
+    update(ref(db,"notifications/"+editKey),{
+      text:text.value,
+      important:important
+    });
+    editKey=null;
+  }else{
+    push(notifyRef,{
+      text:text.value,
+      time:new Date().toLocaleString(),
+      seen:false,
+      important:important
+    });
+  }
+  text.value="";
+  document.getElementById("importantChk").checked=false;
+};
+
+/* LOAD ALL (HISTORY) */
+onValue(notifyRef,(snap)=>{
+  allData=[];
+  snap.forEach(c=>{
+    allData.push({ key:c.key, ...c.val() });
+  });
+  renderList();
+});
+
+/* RENDER WITH FILTER */
+window.renderList=()=>{
+  const box=document.getElementById("list");
+  const filter=document.getElementById("filterSelect").value;
+  box.innerHTML="";
+
+  allData.forEach(d=>{
+    if(
+      (filter==="important" && !d.important) ||
+      (filter==="normal" && d.important) ||
+      (filter==="seen" && !d.seen) ||
+      (filter==="unseen" && d.seen)
+    ) return;
+
+    box.innerHTML+=`
+      <div class="card ${d.important?'important':''}">
+        <b>
+          ${d.text}
+          ${d.important?'<span style="color:#e53935;font-size:11px;">[IMPORTANT]</span>':''}
+        </b><br>
+        <small>${d.time}</small>
+        <div class="actions">
+          <button class="edit" onclick="editItem('${d.key}','${d.text}',${d.important})">Edit</button>
+          <button class="delete" onclick="askDelete('${d.key}')">Delete</button>
+        </div>
+      </div>
+    `;
+  });
+};
+
+/* FILTER CHANGE */
+document.getElementById("filterSelect")
+  .addEventListener("change", renderList);
+
+/* EDIT */
+window.editItem=(k,t,imp)=>{
+  document.getElementById("text").value=t;
+  document.getElementById("importantChk").checked=imp;
+  editKey=k;
+};
+
+/* DELETE */
+window.askDelete=(k)=>{
+  deleteKey=k;
+  document.getElementById("confirm").style.display="flex";
+};
+window.closeConfirm=()=>{
+  document.getElementById("confirm").style.display="none";
+};
+window.confirmDelete=()=>{
+  remove(ref(db,"notifications/"+deleteKey));
+  closeConfirm();
+};
+</script>
+
+</body>
+</html>

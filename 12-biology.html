@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 12th – Biology (Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  
+  // 1–10 Reproduction in Organisms / Sexual Reproduction
+  { q: "पुष्प के किस भाग में परागकण बनते हैं?", o: ["अंडाशय", "परागकोष", "वर्तिकाग्र", "दल"], a: 1 },
+  { q: "परागण का अर्थ क्या है?", o: ["बीज बनना", "निषेचन", "परागकण का स्थानांतरण", "अंकुरण"], a: 2 },
+  { q: "निषेचन कहाँ होता है?", o: ["परागकोष", "वर्तिका", "बीजांड", "दल"], a: 2 },
+  { q: "मानव में युग्मक का निर्माण कहाँ होता है?", o: ["यकृत", "अंडाशय/वृषण", "हृदय", "मस्तिष्क"], a: 1 },
+  { q: "परागण के कितने प्रकार होते हैं?", o: ["एक", "दो", "तीन", "चार"], a: 1 },
+  { q: "स्वपरागण का उदाहरण कौन सा है?", o: ["मक्का", "मटर", "पपीता", "खजूर"], a: 1 },
+  { q: "बीजांड से क्या बनता है?", o: ["फल", "बीज", "पराग", "अंडाशय"], a: 1 },
+  { q: "अंडाशय से क्या बनता है?", o: ["बीज", "फल", "पराग", "दल"], a: 1 },
+  { q: "मानव में निषेचन कहाँ होता है?", o: ["अंडाशय", "गर्भाशय", "फैलोपियन नली", "योनि"], a: 2 },
+  { q: "यौन जनन का मुख्य लाभ क्या है?", o: ["तेजी", "विविधता", "कम ऊर्जा", "सरलता"], a: 1 },
+  
+  // 11–20 Genetics and Evolution
+  { q: "आनुवंशिकी के जनक कौन हैं?", o: ["डार्विन", "मेंडल", "लैमर्क", "मॉर्गन"], a: 1 },
+  { q: "मेंडल ने किस पौधे पर प्रयोग किया?", o: ["गेहूं", "मटर", "चना", "मक्का"], a: 1 },
+  { q: "एक लक्षण के अध्ययन को क्या कहते हैं?", o: ["द्विसंकर", "एकसंकर", "संकर", "बहुसंकर"], a: 1 },
+  { q: "मेंडल का पहला नियम क्या है?", o: ["स्वतंत्र वर्गीकरण", "प्रभाविता", "संकरण", "विकास"], a: 1 },
+  { q: "DNA की पूर्ण रूप क्या है?", o: ["डिऑक्सी न्यूक्लिक अम्ल", "डाइ न्यूक्लिक अम्ल", "डबल अम्ल", "डायनामिक अम्ल"], a: 0 },
+  { q: "DNA की संरचना कैसी होती है?", o: ["एकल कुंडली", "द्विकुंडली", "त्रिकुंडली", "सीधी"], a: 1 },
+  { q: "RNA में कौन सा बेस नहीं होता?", o: ["एडेनिन", "ग्वानिन", "थाइमिन", "यूरैसिल"], a: 2 },
+  { q: "विकासवाद का सिद्धांत किसने दिया?", o: ["मेंडल", "लैमर्क", "डार्विन", "वॉटसन"], a: 2 },
+  { q: "प्राकृतिक चयन का सिद्धांत किससे संबंधित है?", o: ["जनन", "विकास", "प्रकाश", "श्वसन"], a: 1 },
+  { q: "जीन कहाँ स्थित होते हैं?", o: ["साइटोप्लाज्म", "न्यूक्लियस", "गुणसूत्र", "माइटोकॉन्ड्रिया"], a: 2 },
+  
+  // 21–30 Human Health and Disease / Microbes
+  { q: "एड्स रोग किस वायरस से होता है?", o: ["इन्फ्लुएंजा", "HIV", "डेंगू", "कोरोना"], a: 1 },
+  { q: "टीकाकरण का उद्देश्य क्या है?", o: ["इलाज", "रोकथाम", "निदान", "शल्य"], a: 1 },
+  { q: "मलेरिया किससे होता है?", o: ["बैक्टीरिया", "वायरस", "प्रोटोजोआ", "फंगस"], a: 2 },
+  { q: "एंटीबायोटिक किस पर प्रभावी है?", o: ["वायरस", "बैक्टीरिया", "दोनों", "कोई नहीं"], a: 1 },
+  { q: "लैक्टोबैसिलस किस उत्पाद में पाया जाता है?", o: ["दूध", "दही", "मक्खन", "पनीर"], a: 1 },
+  { q: "खमीर किस प्रकार का जीव है?", o: ["बैक्टीरिया", "फंगस", "वायरस", "शैवाल"], a: 1 },
+  { q: "प्रतिरक्षा प्रणाली का कार्य क्या है?", o: ["पाचन", "रक्षा", "श्वसन", "परिवहन"], a: 1 },
+  { q: "टीबी किस अंग को प्रभावित करता है?", o: ["हृदय", "फेफड़े", "यकृत", "गुर्दा"], a: 1 },
+  { q: "रक्त का कौन सा घटक प्रतिरक्षा में सहायक है?", o: ["RBC", "WBC", "प्लाज्मा", "प्लेटलेट"], a: 1 },
+  { q: "विटामिन की कमी से कौन सा रोग होता है?", o: ["संक्रमण", "कुपोषण", "एलर्जी", "ज्वर"], a: 1 },
+  
+  // 31–40 Biotechnology
+  { q: "जैव प्रौद्योगिकी का आधार क्या है?", o: ["DNA", "RNA", "प्रोटीन", "वसा"], a: 0 },
+  { q: "रिकॉम्बिनेंट DNA तकनीक का उपयोग किसमें होता है?", o: ["खेती", "दवा", "उद्योग", "सभी"], a: 3 },
+  { q: "इंसुलिन का उत्पादन किससे किया जाता है?", o: ["पौधे", "बैक्टीरिया", "फंगस", "वायरस"], a: 1 },
+  { q: "PCR का पूर्ण रूप क्या है?", o: ["Polymerase Chain Reaction", "Protein Chain Reaction", "Poly Reaction", "None"], a: 0 },
+  { q: "जीन क्लोनिंग का अर्थ क्या है?", o: ["जीन हटाना", "जीन जोड़ना", "जीन की प्रतिलिपि", "जीन नष्ट करना"], a: 2 },
+  { q: "Bt कपास किसके विरुद्ध प्रतिरोधी है?", o: ["कीट", "सूखा", "बाढ़", "रोग"], a: 0 },
+  { q: "ट्रांसजेनिक जीव क्या होते हैं?", o: ["प्राकृतिक", "संशोधित", "विलुप्त", "जंगली"], a: 1 },
+  { q: "जीन थेरेपी का उपयोग किसमें होता है?", o: ["कैंसर", "आनुवंशिक रोग", "टीबी", "मलेरिया"], a: 1 },
+  { q: "एंजाइम किस प्रकार का अणु है?", o: ["कार्बोहाइड्रेट", "प्रोटीन", "वसा", "विटामिन"], a: 1 },
+  { q: "बायोगैस का मुख्य घटक क्या है?", o: ["CO₂", "O₂", "CH₄", "N₂"], a: 2 },
+  
+  // 41–50 Ecology and Environment
+  { q: "पारिस्थितिकी का अध्ययन किससे संबंधित है?", o: ["जीव", "पर्यावरण", "दोनों", "कोई नहीं"], a: 2 },
+  { q: "खाद्य श्रृंखला का प्रथम स्तर क्या है?", o: ["उपभोक्ता", "अपघटक", "उत्पादक", "परभक्षी"], a: 2 },
+  { q: "ऊर्जा का प्रवाह कैसा होता है?", o: ["दोनों ओर", "एक दिशा", "चक्रीय", "स्थिर"], a: 1 },
+  { q: "ओजोन परत कहाँ पाई जाती है?", o: ["क्षोभमंडल", "समतापमंडल", "आयनमंडल", "मध्य मंडल"], a: 1 },
+  { q: "ग्रीन हाउस प्रभाव किससे होता है?", o: ["O₂", "CO₂", "N₂", "H₂"], a: 1 },
+  { q: "जैव विविधता का संरक्षण क्यों आवश्यक है?", o: ["सौंदर्य", "संतुलन", "भोजन", "आय"], a: 1 },
+  { q: "विलुप्तप्राय प्रजाति का अर्थ क्या है?", o: ["बहुत अधिक", "खतरे में", "सामान्य", "नवीन"], a: 1 },
+  { q: "राष्ट्रीय उद्यान का उद्देश्य क्या है?", o: ["शिकार", "संरक्षण", "खेती", "उद्योग"], a: 1 },
+  { q: "अपघटक का उदाहरण क्या है?", o: ["घास", "शेर", "फंगस", "हिरण"], a: 2 },
+  { q: "पर्यावरण प्रदूषण का मुख्य कारण क्या है?", o: ["प्राकृतिक", "मानव क्रिया", "वन", "नदी"], a: 1 }
+  
+];
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

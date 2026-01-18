@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 10th – Sanskrit (Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  // 1–10 : सुभाषितानि
+  { q: "सुभाषितानि किस भाषा में हैं?", o: ["हिंदी", "संस्कृत", "पाली", "प्राकृत"], a: 1 },
+  { q: "‘विद्या ददाति विनयम्’ में विद्या क्या देती है?", o: ["बल", "धन", "विनय", "सुख"], a: 2 },
+  { q: "विनय से क्या प्राप्त होता है?", o: ["धन", "पात्रता", "यश", "बल"], a: 1 },
+  { q: "पात्रत्व से क्या मिलता है?", o: ["धन", "ज्ञान", "मोक्ष", "सुख"], a: 0 },
+  { q: "सुभाषित का अर्थ है—", o: ["अशुभ वाक्य", "अच्छा वचन", "लंबा वाक्य", "कठिन वाक्य"], a: 1 },
+  { q: "सुभाषितों में किसकी शिक्षा मिलती है?", o: ["व्याकरण", "नैतिक", "गणित", "विज्ञान"], a: 1 },
+  { q: "सुभाषित सामान्यतः होते हैं—", o: ["लंबे", "कठिन", "संक्षिप्त", "गद्य"], a: 2 },
+  { q: "सुभाषित का मुख्य उद्देश्य है—", o: ["मनोरंजन", "नीति शिक्षा", "कहानी", "इतिहास"], a: 1 },
+  { q: "सुभाषितों की भाषा कैसी होती है?", o: ["सरल", "कठिन", "मिश्रित", "अस्पष्ट"], a: 0 },
+  { q: "सुभाषित किसका भाग हैं?", o: ["काव्य", "नाटक", "कहानी", "निबंध"], a: 0 },
+  
+  // 11–20 : रामायण / महाभारत आधारित
+  { q: "रामायण के रचयिता कौन हैं?", o: ["व्यास", "वाल्मीकि", "कालिदास", "भास"], a: 1 },
+  { q: "राम के पिता का नाम क्या था?", o: ["जनक", "दशरथ", "वशिष्ठ", "भरत"], a: 1 },
+  { q: "सीता जी का जन्म स्थान कौन सा है?", o: ["अयोध्या", "मिथिला", "किष्किन्धा", "लंका"], a: 1 },
+  { q: "लक्ष्मण किसके भाई थे?", o: ["रावण", "राम", "हनुमान", "भरत"], a: 1 },
+  { q: "महाभारत के रचयिता कौन हैं?", o: ["वाल्मीकि", "व्यास", "कालिदास", "तुलसी"], a: 1 },
+  { q: "गीता किस ग्रंथ का भाग है?", o: ["रामायण", "महाभारत", "पुराण", "उपनिषद"], a: 1 },
+  { q: "कुरुक्षेत्र युद्ध कितने दिन चला?", o: ["10", "12", "15", "18"], a: 3 },
+  { q: "अर्जुन का सारथी कौन था?", o: ["भीम", "कृष्ण", "द्रोण", "कर्ण"], a: 1 },
+  { q: "रामायण किस भाषा में है?", o: ["पाली", "संस्कृत", "अवधी", "प्राकृत"], a: 1 },
+  { q: "महाभारत को और क्या कहा जाता है?", o: ["जय", "भारत", "इतिहास", "काव्य"], a: 1 },
+  
+  // 21–30 : नीति एवं जीवन शिक्षा
+  { q: "सत्यं वद। धर्मं चर। किससे संबंधित है?", o: ["वेद", "उपनिषद", "पुराण", "रामायण"], a: 1 },
+  { q: "अहिंसा का अर्थ क्या है?", o: ["बल", "क्रोध", "हिंसा न करना", "युद्ध"], a: 2 },
+  { q: "धर्म का अर्थ क्या है?", o: ["धन", "कर्तव्य", "सुख", "भय"], a: 1 },
+  { q: "गुरु का सम्मान करना क्या कहलाता है?", o: ["धर्म", "अधर्म", "पाप", "दोष"], a: 0 },
+  { q: "विद्यार्थी का मुख्य कर्तव्य क्या है?", o: ["खेल", "पढ़ाई", "घूमना", "धन कमाना"], a: 1 },
+  { q: "सत्य की विजय होती है—", o: ["सदैव", "कभी नहीं", "कभी-कभी", "अक्सर"], a: 0 },
+  { q: "संस्कृत किस प्रकार की भाषा है?", o: ["विदेशी", "राष्ट्रीय", "शास्त्रीय", "आधुनिक"], a: 2 },
+  { q: "संस्कृत को क्या कहा जाता है?", o: ["देवभाषा", "लोकभाषा", "मातृभाषा", "राष्ट्रभाषा"], a: 0 },
+  { q: "नीति शिक्षा का उद्देश्य क्या है?", o: ["ज्ञान", "चरित्र निर्माण", "मनोरंजन", "कौशल"], a: 1 },
+  { q: "सत्संग से क्या प्राप्त होता है?", o: ["दुख", "पाप", "ज्ञान", "क्रोध"], a: 2 },
+  
+  // 31–40 : व्याकरण आधारित
+  { q: "संस्कृत में कुल कितने वचन होते हैं?", o: ["एक", "दो", "तीन", "चार"], a: 2 },
+  { q: "प्रथम पुरुष किसे कहते हैं?", o: ["बोलने वाला", "सुनने वाला", "जिसके बारे में कहा जाए", "कोई नहीं"], a: 0 },
+  { q: "‘रामः पठति’ में क्रिया क्या है?", o: ["रामः", "पठति", "पठन", "पाठ"], a: 1 },
+  { q: "‘बालकः’ शब्द का लिंग क्या है?", o: ["स्त्री", "पुं", "नपुंसक", "कोई नहीं"], a: 1 },
+  { q: "संस्कृत में कितने काल होते हैं?", o: ["दो", "तीन", "चार", "पाँच"], a: 1 },
+  { q: "‘गच्छति’ किस काल का उदाहरण है?", o: ["भूत", "वर्तमान", "भविष्य", "सभी"], a: 1 },
+  { q: "‘करिष्यति’ किस काल का है?", o: ["भूत", "वर्तमान", "भविष्य", "लोट"], a: 2 },
+  { q: "‘फलम्’ शब्द किस लिंग का है?", o: ["पुं", "स्त्री", "नपुंसक", "कोई नहीं"], a: 2 },
+  { q: "संस्कृत में अव्यय का अर्थ है—", o: ["बदलने वाला", "न बदलने वाला", "क्रिया", "संज्ञा"], a: 1 },
+  { q: "‘सुन्दरः’ शब्द किसका उदाहरण है?", o: ["संज्ञा", "सर्वनाम", "विशेषण", "क्रिया"], a: 2 },
+  
+  // 41–50 : विविध प्रश्न
+  { q: "संस्कृत भाषा का महत्व क्यों है?", o: ["कठिन है", "प्राचीन है", "शास्त्रों की भाषा", "कम बोली जाती है"], a: 2 },
+  { q: "वेदों की भाषा क्या है?", o: ["हिंदी", "संस्कृत", "पाली", "उर्दू"], a: 1 },
+  { q: "उपनिषद किससे संबंधित हैं?", o: ["ज्ञान", "युद्ध", "कहानी", "नाटक"], a: 0 },
+  { q: "संस्कृत का अध्ययन किसके लिए उपयोगी है?", o: ["चरित्र", "ज्ञान", "संस्कृति", "सभी"], a: 3 },
+  { q: "संस्कृत भारत की कौन-सी धरोहर है?", o: ["भाषाई", "सांस्कृतिक", "ऐतिहासिक", "सभी"], a: 3 },
+  { q: "संस्कृत में संवाद को क्या कहते हैं?", o: ["संभाषण", "वाक्य", "पाठ", "लेख"], a: 0 },
+  { q: "संस्कृत का आधुनिक उपयोग कहाँ है?", o: ["मंत्र", "योग", "शोध", "सभी"], a: 3 },
+  { q: "संस्कृत भाषा किससे जुड़ी है?", o: ["संस्कृति", "विज्ञान", "खेल", "व्यापार"], a: 0 },
+  { q: "संस्कृत सीखने से क्या बढ़ता है?", o: ["धन", "बुद्धि", "क्रोध", "आलस्य"], a: 1 },
+  { q: "संस्कृत का लक्ष्य क्या है?", o: ["ज्ञान और नीति", "केवल भाषा", "केवल पूजा", "केवल ग्रंथ"], a: 0 }
+];
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

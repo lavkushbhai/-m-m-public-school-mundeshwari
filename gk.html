@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,sans-serif;
+  background:#f2f5f9;
+}
+
+/* ===== HEADER ===== */
+.header{
+  background:#1e88e5;
+  color:#fff;
+  padding:14px;
+  text-align:center;
+  font-size:18px;
+  font-weight:900;
+}
+
+/* ===== SUB HEADER ===== */
+.sub-header{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 16px;
+  background:#e3f2fd;
+  font-weight:800;
+}
+.timer{color:#d32f2f}
+.progress{color:#1e88e5}
+
+/* ===== TEST BOX ===== */
+.test-box{
+  max-width:720px;
+  margin:20px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:22px;
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+}
+
+/* QUESTION */
+.q-number{color:#1e88e5;font-weight:900}
+.question{margin-top:8px;font-size:18px;font-weight:700}
+
+/* OPTIONS */
+.option{
+  background:#f1f5ff;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 6px 14px rgba(0,0,0,.15);
+  cursor:pointer;
+}
+.option.selected{
+  background:#c5d7ff;
+  border:2px solid #1e88e5;
+  font-weight:800;
+}
+
+/* NEXT */
+.next-btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  background:#1e88e5;
+  color:#fff;
+  font-weight:900;
+  font-size:16px;
+}
+.next-btn:disabled{background:#90caf9}
+
+/* ===== RESULT ===== */
+.result-box{
+  max-width:600px;
+  margin:30px auto;
+  background:#fff;
+  padding:26px;
+  border-radius:26px;
+  box-shadow:0 22px 50px rgba(0,0,0,.35);
+}
+.result-box h2{
+  text-align:center;
+  color:#1e88e5;
+  margin-bottom:20px;
+}
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.stat{
+  background:#f5f7fa;
+  padding:14px;
+  border-radius:16px;
+  text-align:center;
+  font-weight:800;
+  box-shadow:0 8px 18px rgba(0,0,0,.15);
+}
+.stat.correct{color:#2e7d32}
+.stat.wrong{color:#c62828}
+.stat.time{color:#6a1b9a}
+.stat.total{color:#1565c0}
+
+.grade{
+  margin-top:20px;
+  text-align:center;
+  font-size:22px;
+  font-weight:900;
+  color:#2e7d32;
+}
+
+.school{
+  margin-top:10px;
+  text-align:center;
+  font-weight:700;
+  color:#555;
+}
+
+.back-btn{
+  margin-top:20px;
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  background:#e53935;
+  color:#fff;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">M.M Public School Mundeshwari</div>
+
+<div class="sub-header">
+  <div class="timer" id="timer">⏱ 00:00</div>
+  <div class="progress" id="progress">Q. 1 / 100</div>
+</div>
+
+<div class="test-box">
+  <div class="q-number" id="qNumber">Q. 1</div>
+  <div class="question" id="questionText"></div>
+  <div id="options"></div>
+  <button class="next-btn" id="nextBtn" disabled>Next</button>
+</div>
+
+<script>
+/* ⚠️ QUESTIONS तुम खुद add करोगे */
+const questions = [
+  { q: "भारत की राजधानी क्या है?", options: ["मुंबई", "दिल्ली", "कोलकाता", "चेन्नई"], answer: 1 },
+  { q: "ताजमहल कहाँ स्थित है?", options: ["आगरा", "दिल्ली", "जयपुर", "लखनऊ"], answer: 0 },
+  { q: "भारत का राष्ट्रीय पशु कौन है?", options: ["शेर", "हाथी", "बाघ", "घोड़ा"], answer: 2 },
+  { q: "भारत का राष्ट्रीय पक्षी कौन है?", options: ["तोता", "मोर", "कबूतर", "कोयल"], answer: 1 },
+  { q: "भारत का राष्ट्रीय फूल कौन सा है?", options: ["गुलाब", "कमल", "सूरजमुखी", "लिली"], answer: 1 },
+  
+  { q: "सूर्य किस दिशा से निकलता है?", options: ["पश्चिम", "उत्तर", "पूर्व", "दक्षिण"], answer: 2 },
+  { q: "भारत का राष्ट्रीय खेल क्या है?", options: ["क्रिकेट", "फुटबॉल", "हॉकी", "कबड्डी"], answer: 2 },
+  { q: "भारत का राष्ट्रीय गीत कौन सा है?", options: ["वंदे मातरम्", "जन गण मन", "सारे जहाँ से अच्छा", "ऐ मेरे वतन"], answer: 0 },
+  { q: "भारत का राष्ट्रीय गान किसने लिखा?", options: ["महात्मा गांधी", "रवींद्रनाथ टैगोर", "सुभाष बोस", "नेहरू"], answer: 1 },
+  { q: "भारत की मुद्रा क्या है?", options: ["डॉलर", "रुपया", "यूरो", "पाउंड"], answer: 1 },
+  
+  { q: "मानव शरीर में कितनी हड्डियाँ होती हैं?", options: ["200", "206", "210", "215"], answer: 1 },
+  { q: "मानव शरीर का सबसे बड़ा अंग कौन सा है?", options: ["हृदय", "त्वचा", "मस्तिष्क", "यकृत"], answer: 1 },
+  { q: "हृदय किसे पंप करता है?", options: ["पानी", "रक्त", "ऑक्सीजन", "हवा"], answer: 1 },
+  { q: "पौधे भोजन कैसे बनाते हैं?", options: ["श्वसन", "प्रकाश संश्लेषण", "पाचन", "वाष्पीकरण"], answer: 1 },
+  { q: "सूर्य ऊर्जा का मुख्य स्रोत क्या है?", options: ["कोयला", "गैस", "नाभिकीय ऊर्जा", "लकड़ी"], answer: 2 },
+  
+  { q: "पानी का रासायनिक सूत्र क्या है?", options: ["H2", "H2O", "O2", "HO"], answer: 1 },
+  { q: "हवा में सबसे अधिक कौन सी गैस होती है?", options: ["ऑक्सीजन", "नाइट्रोजन", "कार्बन", "हाइड्रोजन"], answer: 1 },
+  { q: "धरती का सबसे बड़ा महासागर कौन सा है?", options: ["हिंद महासागर", "अटलांटिक", "प्रशांत", "आर्कटिक"], answer: 2 },
+  { q: "भारत का सबसे बड़ा राज्य कौन सा है?", options: ["उत्तर प्रदेश", "मध्य प्रदेश", "राजस्थान", "बिहार"], answer: 2 },
+  { q: "भारत का सबसे छोटा राज्य कौन सा है?", options: ["गोवा", "सिक्किम", "त्रिपुरा", "मणिपुर"], answer: 0 },
+  
+  { q: "भारत का सबसे ऊँचा पर्वत शिखर कौन सा है?", options: ["एवरेस्ट", "कंचनजंगा", "नंदा देवी", "धौलागिरी"], answer: 1 },
+  { q: "कंप्यूटर का दिमाग किसे कहा जाता है?", options: ["RAM", "ROM", "CPU", "Hard Disk"], answer: 2 },
+  { q: "कंप्यूटर में डेटा किसमें सुरक्षित रहता है?", options: ["CPU", "RAM", "Monitor", "Hard Disk"], answer: 3 },
+  { q: "मोबाइल फोन किस ऊर्जा से चलता है?", options: ["पानी", "बैटरी", "कोयला", "गैस"], answer: 1 },
+  { q: "टीवी किस माध्यम से चलता है?", options: ["रेडियो तरंग", "ध्वनि", "प्रकाश", "ऊष्मा"], answer: 0 },
+  
+  { q: "भारत का स्वतंत्रता दिवस कब मनाया जाता है?", options: ["26 जनवरी", "15 अगस्त", "2 अक्टूबर", "14 नवंबर"], answer: 1 },
+  { q: "गणतंत्र दिवस कब मनाया जाता है?", options: ["15 अगस्त", "26 जनवरी", "2 अक्टूबर", "5 सितंबर"], answer: 1 },
+  { q: "महात्मा गांधी का जन्म कब हुआ?", options: ["2 अक्टूबर", "15 अगस्त", "26 जनवरी", "14 नवंबर"], answer: 0 },
+  { q: "भारत को आज़ादी किस वर्ष मिली?", options: ["1945", "1946", "1947", "1948"], answer: 2 },
+  { q: "भारतीय संविधान कब लागू हुआ?", options: ["26 जनवरी 1950", "15 अगस्त 1947", "2 अक्टूबर 1950", "26 जनवरी 1947"], answer: 0 },
+  
+  { q: "रेल का इंजन किस ऊर्जा से चलता है?", options: ["पानी", "बिजली", "डीजल", "दोनों B और C"], answer: 3 },
+  { q: "हवाई जहाज कहाँ उड़ता है?", options: ["पानी", "भूमि", "आकाश", "पर्वत"], answer: 2 },
+  { q: "नदी समुद्र में क्यों गिरती है?", options: ["ऊँचाई", "ढलान", "दबाव", "गुरुत्व"], answer: 1 },
+  { q: "पेड़ हमें क्या देते हैं?", options: ["धुआँ", "ऑक्सीजन", "कार्बन", "गैस"], answer: 1 },
+  { q: "पृथ्वी का आकार कैसा है?", options: ["चपटा", "गोल", "चौकोर", "लंबा"], answer: 1 },
+  
+  { q: "दिन और रात क्यों होते हैं?", options: ["सूर्य घूमता है", "पृथ्वी घूमती है", "चाँद घूमता है", "बादल"], answer: 1 },
+  { q: "चंद्रमा पृथ्वी का क्या है?", options: ["ग्रह", "उपग्रह", "तारा", "धूमकेतु"], answer: 1 },
+  { q: "सबसे तेज जानवर कौन है?", options: ["शेर", "घोड़ा", "चीताह", "कुत्ता"], answer: 2 },
+  { q: "सबसे बड़ा पक्षी कौन है?", options: ["मोर", "शुतुरमुर्ग", "चील", "कबूतर"], answer: 1 },
+  { q: "सबसे छोटा पक्षी कौन है?", options: ["गौरैया", "तोता", "हमिंग बर्ड", "कबूतर"], answer: 2 },
+  
+  { q: "दूध से क्या बनता है?", options: ["दही", "पानी", "तेल", "नमक"], answer: 0 },
+  { q: "शहद कौन बनाता है?", options: ["मक्खी", "चींटी", "तितली", "मच्छर"], answer: 0 },
+  { q: "अंडा किससे मिलता है?", options: ["गाय", "मुर्गी", "बकरी", "भैंस"], answer: 1 },
+  { q: "फल किस पर उगते हैं?", options: ["जड़", "तना", "पेड़", "पत्ता"], answer: 2 },
+  { q: "सब्जियाँ हमें क्या देती हैं?", options: ["ताकत", "विटामिन", "चर्बी", "बीमारी"], answer: 1 },
+  
+  { q: "लाल किला कहाँ है?", options: ["आगरा", "दिल्ली", "जयपुर", "लखनऊ"], answer: 1 },
+  { q: "कुतुब मीनार कहाँ है?", options: ["दिल्ली", "आगरा", "जयपुर", "पटना"], answer: 0 },
+  { q: "भारत की सबसे लंबी नदी कौन सी है?", options: ["यमुना", "गंगा", "गोदावरी", "नर्मदा"], answer: 1 },
+  { q: "भारत का राष्ट्रीय वृक्ष कौन सा है?", options: ["नीम", "पीपल", "बरगद", "आम"], answer: 2 },
+  { q: "सबसे अधिक जनसंख्या वाला देश कौन सा है?", options: ["भारत", "अमेरिका", "चीन", "रूस"], answer: 0 },
+  
+  { q: "कक्षा में पढ़ाने वाला कौन होता है?", options: ["डॉक्टर", "इंजीनियर", "शिक्षक", "वकील"], answer: 2 },
+  { q: "बीमारी का इलाज कौन करता है?", options: ["शिक्षक", "डॉक्टर", "किसान", "ड्राइवर"], answer: 1 },
+  { q: "खेत में काम कौन करता है?", options: ["किसान", "डॉक्टर", "पुलिस", "नर्स"], answer: 0 },
+  { q: "पुलिस क्या करती है?", options: ["पढ़ाती है", "इलाज", "सुरक्षा", "खेती"], answer: 2 },
+  { q: "हमारे देश का प्रधानमंत्री कौन होता है?", options: ["राजा", "प्रधानमंत्री", "मुख्यमंत्री", "गवर्नर"], answer: 1 }
+];
+
+const TOTAL_QUESTIONS = 100;
+
+let current=0, score=0, attempted=0;
+let start=Date.now();
+
+const timerEl=timer, progressEl=progress;
+
+setInterval(()=>{
+  const d=Date.now()-start;
+  const m=Math.floor(d/60000);
+  const s=Math.floor((d%60000)/1000);
+  timerEl.innerText=`⏱ ${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+},1000);
+
+function loadQ(){
+  qNumber.innerText=`Q. ${current+1}`;
+  questionText.innerText=questions[current].q;
+  progressEl.innerText=`Q. ${current+1} / ${TOTAL_QUESTIONS}`;
+  options.innerHTML="";
+  nextBtn.disabled=true;
+
+  questions[current].options.forEach((op,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    d.innerText=op;
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(o=>o.classList.remove("selected"));
+      d.classList.add("selected");
+      d.dataset.val=i;
+      nextBtn.disabled=false;
+    };
+    options.appendChild(d);
+  });
+}
+
+nextBtn.onclick=()=>{
+  const sel=document.querySelector(".option.selected");
+  if(!sel) return;
+  attempted++;
+  if(+sel.dataset.val===questions[current].answer) score++;
+  current++;
+  if(current<questions.length) loadQ();
+  else showResult();
+};
+
+function showResult(){
+  const d=Date.now()-start;
+  const m=Math.floor(d/60000);
+  const s=Math.floor((d%60000)/1000);
+
+  let grade="और अभ्यास करें";
+  if(score>=80) grade="Grade A";
+  else if(score>=60) grade="Grade B";
+  else if(score>=40) grade="Grade C";
+
+  document.body.innerHTML=`
+  <div class="result-box">
+    <h2>Test Result</h2>
+
+    <div class="stats">
+      <div class="stat total">Total: ${TOTAL_QUESTIONS}</div>
+      <div class="stat correct">Correct: ${score}</div>
+      <div class="stat wrong">Wrong: ${attempted-score}</div>
+      <div class="stat time">Time: ${m}m ${s}s</div>
+    </div>
+
+    <div class="grade">${grade}</div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <button class="back-btn" onclick="location.href='index.html'">
+      Back to Home
+    </button>
+  </div>`;
+}
+
+loadQ();
+</script>
+
+</body>
+</html>

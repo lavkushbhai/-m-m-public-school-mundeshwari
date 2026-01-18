@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 12th – English (Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  
+  /* ---------- Flamingo ---------- */
+  
+  // 1–10 The Last Lesson
+  { q: "Who wrote 'The Last Lesson'?", o: ["Alphonse Daudet", "Robert Frost", "Stephen Hawking", "Pearl Buck"], a: 0 },
+  { q: "The Last Lesson is based on which country?", o: ["Germany", "France", "England", "America"], a: 1 },
+  { q: "Who was Franz's teacher?", o: ["Mr. Hamel", "Mr. M. Laurent", "Mr. Jones", "Mr. Smith"], a: 0 },
+  { q: "What was ordered to be taught in schools?", o: ["French", "German", "English", "Latin"], a: 1 },
+  { q: "How many years had Mr. Hamel taught at the school?", o: ["20", "30", "40", "50"], a: 2 },
+  { q: "What was written on the blackboard at the end?", o: ["Long Live France", "Vive La France", "Freedom", "Education"], a: 1 },
+  { q: "Franz was afraid because he had not prepared which lesson?", o: ["Nouns", "Verbs", "Participles", "Adjectives"], a: 2 },
+  { q: "Who were sitting in the back benches?", o: ["Teachers", "Villagers", "Students", "Soldiers"], a: 1 },
+  { q: "The story highlights the importance of?", o: ["Money", "Power", "Language", "War"], a: 2 },
+  { q: "Mr. Hamel wore which clothes that day?", o: ["Green coat", "Black coat", "Blue coat", "Grey coat"], a: 0 },
+  
+  // 11–20 Lost Spring
+  { q: "Who wrote 'Lost Spring'?", o: ["Anees Jung", "Bama", "Kamala Das", "Arundhati Roy"], a: 0 },
+  { q: "Who is Saheb?", o: ["Ragpicker", "Teacher", "Doctor", "Student"], a: 0 },
+  { q: "Where does Saheb live?", o: ["Seemapuri", "Mumbai", "Chennai", "Kolkata"], a: 0 },
+  { q: "What does Saheb find as gold?", o: ["Coins", "Garbage", "Shoes", "Books"], a: 1 },
+  { q: "Who are bangle makers?", o: ["Farmers", "Children", "Women", "Men"], a: 2 },
+  { q: "Bangle makers live in which place?", o: ["Firozabad", "Agra", "Delhi", "Jaipur"], a: 0 },
+  { q: "Why can’t bangle makers see daylight?", o: ["Blind", "Tradition", "Poverty", "Law"], a: 2 },
+  { q: "Lost Spring talks about?", o: ["Childhood", "Education", "Poverty", "All of these"], a: 3 },
+  { q: "What does Saheb lose after working at tea stall?", o: ["Money", "Freedom", "Food", "Health"], a: 1 },
+  { q: "Who exploits children?", o: ["Parents", "Middlemen", "Government", "Teachers"], a: 1 },
+  
+  // 21–30 Deep Water / Indigo
+  { q: "Who wrote 'Deep Water'?", o: ["William Douglas", "Stephen Hawking", "Pearl Buck", "Robert Frost"], a: 0 },
+  { q: "Where did the author fear water?", o: ["River", "Lake", "Pool", "Sea"], a: 2 },
+  { q: "Who saved the author from drowning?", o: ["Coach", "Instructor", "A boy", "Father"], a: 2 },
+  { q: "What fear did Douglas overcome?", o: ["Fire", "Water", "Height", "Darkness"], a: 1 },
+  { q: "Who wrote 'Indigo'?", o: ["Louis Fischer", "Anees Jung", "Bama", "Alphonse"], a: 0 },
+  { q: "Indigo is based on which movement?", o: ["Non-cooperation", "Champaran", "Civil Disobedience", "Quit India"], a: 1 },
+  { q: "Who led the Champaran movement?", o: ["Nehru", "Gandhi", "Patel", "Rajendra Prasad"], a: 1 },
+  { q: "What crop were farmers forced to grow?", o: ["Rice", "Indigo", "Wheat", "Sugarcane"], a: 1 },
+  { q: "The landlords were from?", o: ["India", "Germany", "England", "France"], a: 2 },
+  { q: "Indigo highlights the power of?", o: ["Money", "Truth", "Violence", "Politics"], a: 1 },
+  
+  /* ---------- Vistas ---------- */
+  
+  // 31–40 The Enemy / On the Face of It
+  { q: "Who wrote 'The Enemy'?", o: ["Pearl S. Buck", "Jhumpa Lahiri", "Bama", "Anita Desai"], a: 0 },
+  { q: "Dr. Sadao was a?", o: ["Soldier", "Doctor", "Farmer", "Teacher"], a: 1 },
+  { q: "The enemy soldier belonged to?", o: ["Japan", "China", "America", "Russia"], a: 2 },
+  { q: "Who helped Dr. Sadao secretly?", o: ["Hana", "Servant", "Soldier", "Guard"], a: 0 },
+  { q: "Who wrote 'On the Face of It'?", o: ["Susan Hill", "Claire", "Shaw", "Douglas"], a: 0 },
+  { q: "Who was Derry?", o: ["Blind boy", "Burnt boy", "Crippled boy", "Poor boy"], a: 1 },
+  { q: "Who was Mr. Lamb?", o: ["Teacher", "Gardener", "Old man", "Doctor"], a: 2 },
+  { q: "What was Mr. Lamb’s disability?", o: ["Blind", "Deaf", "Lame", "Burnt"], a: 1 },
+  { q: "What did Derry fear most?", o: ["Pain", "People", "Fire", "Darkness"], a: 1 },
+  { q: "The story teaches us about?", o: ["Courage", "Optimism", "Kindness", "All"], a: 3 },
+  
+  // 41–50 Evans Tries an O-Level / Poets and Pancakes
+  { q: "Who wrote 'Evans Tries an O-Level'?", o: ["Colin Dexter", "Douglas", "Fischer", "Hill"], a: 0 },
+  { q: "Evans was a?", o: ["Teacher", "Thief", "Prisoner", "Doctor"], a: 2 },
+  { q: "Evans was good at?", o: ["Maths", "German", "French", "English"], a: 1 },
+  { q: "Evans escaped by?", o: ["Digging", "Disguise", "Bribery", "Running"], a: 1 },
+  { q: "Who wrote 'Poets and Pancakes'?", o: ["Asokamitran", "Bama", "Anita Desai", "Kamala Das"], a: 0 },
+  { q: "Gemini Studios was related to?", o: ["Films", "Drama", "TV", "Radio"], a: 0 },
+  { q: "Who was Subbu?", o: ["Actor", "Manager", "Office boy", "Writer"], a: 1 },
+  { q: "The pancake was used for?", o: ["Food", "Make-up", "Paint", "Medicine"], a: 1 },
+  { q: "The chapter gives a picture of?", o: ["Poverty", "Film world", "Education", "Politics"], a: 1 },
+  { q: "Evans was finally caught?", o: ["Yes", "No", "Partly", "Unknown"], a: 0 }
+  
+];
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

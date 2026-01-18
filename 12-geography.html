@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 12th – Geography (Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  
+  /* ===== India : Physical Environment ===== */
+  
+  // 1–10
+  { q: "भारत का सबसे लंबा हिमालयी पर्वत श्रेणी कौन-सा है?", o: ["हिमाद्रि", "हिमाचल", "शिवालिक", "काराकोरम"], a: 0 },
+  { q: "हिमालय का सबसे ऊँचा भाग कौन-सा है?", o: ["हिमाचल", "शिवालिक", "हिमाद्रि", "ट्रांस हिमालय"], a: 2 },
+  { q: "शिवालिक पर्वत किस प्रकार की चट्टानों से बना है?", o: ["आग्नेय", "रूपांतरित", "अवसादी", "ग्रेनाइट"], a: 2 },
+  { q: "दक्कन का पठार किस चट्टान से बना है?", o: ["ग्रेनाइट", "बेसाल्ट", "चूना पत्थर", "बालू पत्थर"], a: 1 },
+  { q: "थार मरुस्थल किस राज्य में स्थित है?", o: ["गुजरात", "हरियाणा", "राजस्थान", "पंजाब"], a: 2 },
+  { q: "भारत का सबसे बड़ा पठार कौन-सा है?", o: ["छोटानागपुर", "मालवा", "दक्कन", "मेघालय"], a: 2 },
+  { q: "पूर्वी घाट का सर्वोच्च शिखर कौन-सा है?", o: ["महेंद्रगिरि", "अनाइमुडी", "नीलगिरि", "कारबी"], a: 0 },
+  { q: "पश्चिमी घाट को और किस नाम से जाना जाता है?", o: ["सह्याद्रि", "नीलगिरि", "अरावली", "विन्ध्य"], a: 0 },
+  { q: "अरावली पर्वत की उत्पत्ति किस युग में हुई?", o: ["आधुनिक", "प्राचीन", "मध्य", "नवीन"], a: 1 },
+  { q: "भारत की तटीय रेखा की कुल लंबाई लगभग कितनी है?", o: ["6100 किमी", "7500 किमी", "9000 किमी", "5000 किमी"], a: 1 },
+  
+  /* ===== India : Climate ===== */
+  
+  // 11–20
+  { q: "भारत में मानसून का आगमन किस दिशा से होता है?", o: ["उत्तर", "दक्षिण-पश्चिम", "दक्षिण-पूर्व", "उत्तर-पश्चिम"], a: 1 },
+  { q: "मानसून शब्द किस भाषा से लिया गया है?", o: ["संस्कृत", "अरबी", "फ्रेंच", "ग्रीक"], a: 1 },
+  { q: "भारत में शीत ऋतु कब होती है?", o: ["मार्च–मई", "जून–सितंबर", "दिसंबर–फरवरी", "अक्टूबर–नवंबर"], a: 2 },
+  { q: "भारत में अधिकतम वर्षा वाला स्थान कौन-सा है?", o: ["शिलांग", "चेरापूंजी", "मासिनराम", "दार्जिलिंग"], a: 2 },
+  { q: "एल-नीनो किससे संबंधित है?", o: ["भूकंप", "महासागरीय ताप", "चक्रवात", "हिमपात"], a: 1 },
+  { q: "भारत में वर्षा का मुख्य स्रोत क्या है?", o: ["पश्चिमी विक्षोभ", "मानसून", "चक्रवात", "स्थानीय हवाएँ"], a: 1 },
+  { q: "तमिलनाडु में वर्षा किस मानसून से होती है?", o: ["दक्षिण-पश्चिम", "उत्तर-पूर्व", "पश्चिमी", "स्थानीय"], a: 1 },
+  { q: "लू किस प्रकार की हवा है?", o: ["ठंडी", "आर्द्र", "शुष्क व गर्म", "शीतल"], a: 2 },
+  { q: "भारत में मानसून की अनिश्चितता का मुख्य कारण क्या है?", o: ["वन", "पर्वत", "महासागर", "एल-नीनो"], a: 3 },
+  { q: "भारत में अधिकतम तापमान किस ऋतु में होता है?", o: ["शीत", "वर्षा", "ग्रीष्म", "शरद"], a: 2 },
+  
+  /* ===== India : Drainage ===== */
+  
+  // 21–30
+  { q: "भारत की सबसे लंबी नदी कौन-सी है?", o: ["ब्रह्मपुत्र", "गंगा", "सिंधु", "गोदावरी"], a: 1 },
+  { q: "गंगा नदी का उद्गम स्थल कौन-सा है?", o: ["यमुनोत्री", "गंगोत्री", "अमरकंटक", "मानसरोवर"], a: 1 },
+  { q: "नर्मदा नदी किस सागर में गिरती है?", o: ["बंगाल की खाड़ी", "अरब सागर", "हिंद महासागर", "लक्षद्वीप सागर"], a: 1 },
+  { q: "गोदावरी नदी किस पठार से निकलती है?", o: ["छोटानागपुर", "दक्कन", "मालवा", "मेघालय"], a: 1 },
+  { q: "ब्रह्मपुत्र नदी भारत में किस नाम से जानी जाती है?", o: ["दिहांग", "सियांग", "जमुना", "मेघना"], a: 1 },
+  { q: "यमुना नदी गंगा में कहाँ मिलती है?", o: ["वाराणसी", "प्रयागराज", "पटना", "कानपुर"], a: 1 },
+  { q: "भारत की सबसे लंबी प्रायद्वीपीय नदी कौन-सी है?", o: ["कृष्णा", "कावेरी", "गोदावरी", "महानदी"], a: 2 },
+  { q: "लूनी नदी किस सागर में गिरती है?", o: ["अरब सागर", "बंगाल की खाड़ी", "समुद्र तक नहीं", "हिंद महासागर"], a: 2 },
+  { q: "डेल्टा किस नदी का सबसे बड़ा है?", o: ["नर्मदा", "गोदावरी", "गंगा", "कावेरी"], a: 2 },
+  { q: "भारत में कुल कितने प्रमुख नदी तंत्र हैं?", o: ["10", "12", "14", "16"], a: 2 },
+  
+  /* ===== Human Geography ===== */
+  
+  // 31–40
+  { q: "भारत में जनसंख्या घनत्व सबसे अधिक किस राज्य में है?", o: ["बिहार", "पश्चिम बंगाल", "केरल", "उत्तर प्रदेश"], a: 0 },
+  { q: "जनसंख्या वृद्धि का मुख्य कारण क्या है?", o: ["उच्च जन्म दर", "उच्च मृत्यु दर", "प्रवास", "शिक्षा"], a: 0 },
+  { q: "भारत की जनगणना कितने वर्षों में होती है?", o: ["5", "8", "10", "12"], a: 2 },
+  { q: "भारत में नगरीकरण का मुख्य कारण क्या है?", o: ["कृषि", "उद्योग", "खनन", "पर्यटन"], a: 1 },
+  { q: "भारत में सबसे अधिक प्रवासी राज्य कौन-सा है?", o: ["बिहार", "उत्तर प्रदेश", "राजस्थान", "ओडिशा"], a: 0 },
+  { q: "भारत की सबसे बड़ी जनजाति कौन-सी है?", o: ["गोंड", "संथाल", "भील", "मुण्डा"], a: 0 },
+  { q: "कृषि का सबसे प्रमुख प्रकार कौन-सा है?", o: ["वाणिज्यिक", "निर्वाह", "मिश्रित", "बागानी"], a: 1 },
+  { q: "हरित क्रांति का सर्वाधिक प्रभाव किस फसल पर पड़ा?", o: ["चावल", "गेहूँ", "मक्का", "बाजरा"], a: 1 },
+  { q: "भारत में सबसे अधिक चाय उत्पादन किस राज्य में होता है?", o: ["असम", "पश्चिम बंगाल", "केरल", "तमिलनाडु"], a: 0 },
+  { q: "सूती वस्त्र उद्योग का प्रमुख केंद्र कौन-सा है?", o: ["अहमदाबाद", "मुंबई", "कोयंबटूर", "कानपुर"], a: 1 },
+  
+  /* ===== Transport & Trade ===== */
+  
+  // 41–50
+  { q: "भारत में सबसे लंबा राष्ट्रीय राजमार्ग कौन-सा है?", o: ["NH-7", "NH-44", "NH-27", "NH-48"], a: 1 },
+  { q: "भारत का सबसे बड़ा बंदरगाह कौन-सा है?", o: ["मुंबई", "कोलकाता", "विशाखापट्टनम", "चेन्नई"], a: 0 },
+  { q: "कांडला बंदरगाह किस राज्य में है?", o: ["महाराष्ट्र", "गुजरात", "केरल", "तमिलनाडु"], a: 1 },
+  { q: "भारत में रेल परिवहन का सबसे अधिक विकास किस क्षेत्र में हुआ है?", o: ["हिमालय", "मरुस्थल", "मैदानी भाग", "पठार"], a: 2 },
+  { q: "हवाई परिवहन का मुख्य लाभ क्या है?", o: ["सस्ता", "तेज", "सुरक्षित", "स्थायी"], a: 1 },
+  { q: "भारत का सबसे व्यस्त हवाई अड्डा कौन-सा है?", o: ["दिल्ली", "मुंबई", "बेंगलुरु", "चेन्नई"], a: 0 },
+  { q: "व्यापार संतुलन से क्या तात्पर्य है?", o: ["आयात-निर्यात का अंतर", "केवल आयात", "केवल निर्यात", "घरेलू व्यापार"], a: 0 },
+  { q: "भारत का सबसे बड़ा निर्यात कौन-सा है?", o: ["कृषि उत्पाद", "खनिज", "सेवाएँ", "मशीनरी"], a: 2 },
+  { q: "SEZ का पूर्ण रूप क्या है?", o: ["Special Export Zone", "Special Economic Zone", "State Economic Zone", "Service Economic Zone"], a: 1 },
+  { q: "भारत का प्रमुख व्यापारिक साझेदार देश कौन-सा है?", o: ["चीन", "अमेरिका", "रूस", "जापान"], a: 1 }
+  
+];
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

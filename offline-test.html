@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test – Syllabus</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.5s ease;
+}
+
+body.dark-mode {
+    background: linear-gradient(135deg, #121826 0%, #1a1f35 100%);
+}
+
+.header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: #fff;
+    padding: 24px 16px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(30, 60, 114, 0.4);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+    animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark-mode .header {
+    background: linear-gradient(135deg, #0f1a3d 0%, #1a2c5a 100%);
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+
+.header h1 {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.header p {
+    font-size: 14px;
+    opacity: 0.95;
+    font-weight: 500;
+}
+
+.container {
+    max-width: 520px;
+    margin: auto;
+    padding: 20px 16px 80px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.intro {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #2a5298;
+    box-shadow: 0 12px 30px rgba(42, 82, 152, 0.15);
+    margin-bottom: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    animation: floatUp 0.6s 0.2s both;
+}
+
+.dark-mode .intro {
+    background: linear-gradient(135deg, #1e2a47 0%, #253157 100%);
+    color: #a3b8ff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes floatUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+    margin: 32px 0 18px;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+    padding: 18px;
+    border-radius: 18px;
+    text-align: center;
+    font-weight: 900;
+    color: #1e3c72;
+    box-shadow: 0 10px 28px rgba(30, 60, 114, 0.18);
+    border-left: 5px solid #4a6fff;
+    animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: left;
+}
+
+.dark-mode .section-title {
+    background: linear-gradient(135deg, #1e2a47 0%, #233052 100%);
+    color: #8fa4ff;
+    border-left: 5px solid #8fa4ff;
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px) scale(0.95); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.card {
+    background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 15px 35px rgba(74, 111, 255, 0.15);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    position: relative;
+    overflow: hidden;
+}
+
+.dark-mode .card {
+    background: linear-gradient(135deg, #1e2a47 0%, #253157 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    transition: left 0.7s ease;
+}
+
+.dark-mode .card::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.card:hover::before {
+    left: 100%;
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(74, 111, 255, 0.25);
+}
+
+.dark-mode .card:hover {
+    box-shadow: 0 20px 40px rgba(143, 164, 255, 0.2);
+}
+
+.card:active {
+    transform: translateY(-4px) scale(1.01);
+    transition: transform 0.1s;
+}
+
+.icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #4a6fff 0%, #8a2fff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(74, 111, 255, 0.4);
+    transition: all 0.4s ease;
+}
+
+.card:hover .icon {
+    transform: rotate(15deg) scale(1.1);
+    box-shadow: 0 12px 25px rgba(74, 111, 255, 0.5);
+}
+
+.text h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1e3c72;
+    margin-bottom: 4px;
+}
+
+.dark-mode .text h3 {
+    color: #dbe2ff;
+}
+
+.text p {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.dark-mode .text p {
+    color: #a0aec0;
+}
+
+/* ===== BOTTOM NAVIGATION BAR ===== */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    padding: 16px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -10px 40px rgba(30, 60, 114, 0.2);
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    z-index: 99;
+    transition: all 0.4s ease;
+}
+
+.dark-mode .bottom-nav {
+    background: linear-gradient(135deg, #1e2a47 0%, #253157 100%);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: #4a6fff;
+    padding: 12px 20px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 80px;
+}
+
+.nav-btn:hover {
+    background: rgba(74, 111, 255, 0.1);
+    transform: translateY(-4px);
+}
+
+.nav-btn.active {
+    background: linear-gradient(135deg, #4a6fff 0%, #8a2fff 100%);
+    color: white;
+    box-shadow: 0 8px 25px rgba(74, 111, 255, 0.4);
+}
+
+.nav-btn i {
+    font-size: 22px;
+    margin-bottom: 6px;
+}
+
+.dark-mode .nav-btn {
+    color: #8fa4ff;
+}
+
+.dark-mode .nav-btn:hover {
+    background: rgba(143, 164, 255, 0.2);
+}
+
+/* ===== MENU MODAL ===== */
+.menu-modal {
+    position: fixed;
+    bottom: -100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    padding: 30px 24px;
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.3);
+    z-index: 101;
+    transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark-mode .menu-modal {
+    background: linear-gradient(135deg, #1e2a47 0%, #253157 100%);
+}
+
+.menu-modal.show {
+    bottom: 0;
+}
+
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.menu-header h3 {
+    color: #1e3c72;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.dark-mode .menu-header h3 {
+    color: #dbe2ff;
+}
+
+.close-menu {
+    background: rgba(74, 111, 255, 0.1);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    color: #4a6fff;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-menu:hover {
+    background: #4a6fff;
+    color: white;
+}
+
+.menu-option {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.dark-mode .menu-option {
+    background: rgba(30, 42, 71, 0.7);
+}
+
+.menu-option:hover {
+    transform: translateX(10px);
+    background: white;
+    border-color: #4a6fff;
+    box-shadow: 0 10px 30px rgba(74, 111, 255, 0.2);
+}
+
+.dark-mode .menu-option:hover {
+    background: #2a3860;
+    border-color: #8fa4ff;
+}
+
+.menu-option i {
+    font-size: 24px;
+    margin-right: 20px;
+    color: #4a6fff;
+    min-width: 40px;
+}
+
+.dark-mode .menu-option i {
+    color: #8fa4ff;
+}
+
+.menu-option h4 {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1e3c72;
+    margin-bottom: 4px;
+}
+
+.dark-mode .menu-option h4 {
+    color: #dbe2ff;
+}
+
+.menu-option p {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.dark-mode .menu-option p {
+    color: #a0aec0;
+}
+
+.language-selector {
+    background: rgba(74, 111, 255, 0.1);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 14px;
+    color: #1e3c72;
+    font-weight: 700;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .language-selector {
+    background: rgba(143, 164, 255, 0.2);
+    color: #dbe2ff;
+}
+
+.language-selector:hover {
+    background: rgba(74, 111, 255, 0.2);
+}
+
+.theme-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 18px;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+.dark-mode .theme-toggle {
+    background: rgba(30, 42, 71, 0.7);
+}
+
+.theme-toggle:hover {
+    background: white;
+}
+
+.dark-mode .theme-toggle:hover {
+    background: #2a3860;
+}
+
+.theme-info {
+    display: flex;
+    align-items: center;
+}
+
+.theme-info i {
+    font-size: 24px;
+    margin-right: 20px;
+    color: #4a6fff;
+    min-width: 40px;
+}
+
+.dark-mode .theme-info i {
+    color: #8fa4ff;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: #e0e0e0;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .toggle-switch {
+    background: #2a3860;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .toggle-switch::after {
+    left: 32px;
+    background: #4a6fff;
+}
+
+/* ===== HELP MODAL ===== */
+.help-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    width: 90%;
+    max-width: 500px;
+    border-radius: 30px;
+    padding: 30px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    z-index: 102;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark-mode .help-modal {
+    background: linear-gradient(135deg, #1e2a47 0%, #253157 100%);
+}
+
+.help-modal.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.help-content {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.help-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.help-content::-webkit-scrollbar-thumb {
+    background: #4a6fff;
+    border-radius: 3px;
+}
+
+.help-item {
+    padding: 18px;
+    background: rgba(74, 111, 255, 0.1);
+    border-radius: 16px;
+    margin-bottom: 15px;
+    animation: slideInLeft 0.5s ease;
+}
+
+.help-item h4 {
+    color: #1e3c72;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dark-mode .help-item h4 {
+    color: #dbe2ff;
+}
+
+.help-item p {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.dark-mode .help-item p {
+    color: #a0aec0;
+}
+
+/* ===== LOADING ===== */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeInOverlay 0.3s ease;
+}
+
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.loading-box {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    padding: 36px 40px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark-mode .loading-box {
+    background: linear-gradient(135deg, #1e2a47 0%, #253157 100%);
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.spinner {
+    width: 56px;
+    height: 56px;
+    border: 4px solid rgba(74, 111, 255, 0.1);
+    border-top: 4px solid #4a6fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 20px rgba(74, 111, 255, 0.3);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== COMING SOON ===== */
+.coming-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeInOverlay 0.3s ease;
+}
+
+.coming-box {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    padding: 32px 36px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark-mode .coming-box {
+    background: linear-gradient(135deg, #1e2a47 0%, #253157 100%);
+}
+
+.coming-box h2 {
+    font-size: 24px;
+    color: #1e3c72;
+    margin-bottom: 8px;
+    font-weight: 900;
+}
+
+.dark-mode .coming-box h2 {
+    color: #dbe2ff;
+}
+
+.coming-box p {
+    color: #6b7280;
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
+.dark-mode .coming-box p {
+    color: #a0aec0;
+}
+
+.coming-box button {
+    margin-top: 10px;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #4a6fff 0%, #8a2fff 100%);
+    color: #fff;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(74, 111, 255, 0.4);
+}
+
+.coming-box button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(74, 111, 255, 0.5);
+}
+
+.coming-box button:active {
+    transform: translateY(-1px);
+}
+
+/* Overlay for modals */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+}
+
+.modal-overlay.show {
+    display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .header h1 { font-size: 20px; }
+    .header p { font-size: 13px; }
+    .intro { font-size: 14px; padding: 18px; }
+    .text h3 { font-size: 15px; }
+    .icon { width: 50px; height: 50px; font-size: 22px; }
+    .nav-btn { padding: 10px 15px; min-width: 70px; font-size: 12px; }
+    .nav-btn i { font-size: 20px; }
+}
+.voice-btn{
+    border:none;
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#4a6fff,#8a2fff);
+    color:#fff;
+    font-size:18px;
+    cursor:pointer;
+    margin-left:12px;
+    flex-shrink:0;
+    box-shadow:0 6px 18px rgba(74,111,255,.4);
+    transition:0.3s;
+}
+.voice-btn:hover{
+    transform:scale(1.1);
+}
+.voice-btn.playing{
+    background:linear-gradient(135deg,#ff4757,#ff6b81);
+}
+</style>
+</head>
+
+<body class="light-mode">
+
+<div class="header">
+    <h1>🏫 M.M Public School Mundeshwari</h1>
+    <p>Offline Test • Subject-wise Syllabus</p>
+</div>
+
+<div class="container">
+    <div class="intro">📘 नीचे हर class के लिए Offline Test syllabus दिया गया है</div>
+
+    <!-- CLASS 10 -->
+    <div class="section-title">Class 10 – Offline Test</div>
+    <div class="card" data-file="10-math.html">
+        <div class="icon">📐</div>
+        <div class="text"><h3>Mathematics</h3></div>
+    </div>
+    <div class="card" data-file="10-science.html">
+        <div class="icon">🧪</div>
+        <div class="text"><h3>Science</h3></div>
+    </div>
+    <div class="card" data-file="10-hindi.html">
+        <div class="icon">📖</div>
+        <div class="text"><h3>Hindi</h3></div>
+    </div>
+    <div class="card" data-file="10-English.html">
+        <div class="icon">📘</div>
+        <div class="text"><h3>English</h3></div>
+    </div>
+    <div class="card" data-file="10-social-science.html">
+        <div class="icon">🌍</div>
+        <div class="text"><h3>Social Science</h3></div>
+    </div>
+    <div class="card" data-file="10-Sanskrit.html">
+        <div class="icon">🕉️</div>
+        <div class="text"><h3>Sanskrit</h3></div>
+    </div>
+    <div class="card">
+        <div class="icon">🌙</div>
+        <div class="text"><h3>Urdu</h3></div>
+    </div>
+
+    <!-- CLASS 12 ARTS -->
+    <div class="section-title">Class 12 – Arts</div>
+    <div class="card" data-file="12-history.html">
+        <div class="icon">📜</div>
+        <div class="text"><h3>History</h3></div>
+    </div>
+    <div class="card" data-file="12-political-science.html">
+        <div class="icon">⚖️</div>
+        <div class="text"><h3>Political Science</h3></div>
+    </div>
+    <div class="card" data-file="12-geography.html">
+        <div class="icon">🌍</div>
+        <div class="text"><h3>Geography</h3></div>
+    </div>
+    <div class="card">
+        <div class="icon">👥</div>
+        <div class="text"><h3>Sociology</h3></div>
+    </div>
+    <div class="card">
+        <div class="icon">💰</div>
+        <div class="text"><h3>Economics</h3></div>
+    </div>
+    <div class="card" data-file="12-hindi.html">
+        <div class="icon">📖</div>
+        <div class="text"><h3>Hindi</h3></div>
+    </div>
+    <div class="card" data-file="12-english.html">
+        <div class="icon">📘</div>
+        <div class="text"><h3>English</h3></div>
+    </div>
+
+    <!-- CLASS 12 SCIENCE -->
+    <div class="section-title">Class 12 – Science</div>
+    <div class="card" data-file="12-physics.html">
+        <div class="icon">⚛️</div>
+        <div class="text"><h3>Physics</h3></div>
+    </div>
+    <div class="card" data-file="12-chemistry.html">
+        <div class="icon">🧪</div>
+        <div class="text"><h3>Chemistry</h3></div>
+    </div>
+    <div class="card" data-file="12-mathematics.html">
+        <div class="icon">📐</div>
+        <div class="text"><h3>Mathematics</h3></div>
+    </div>
+    <div class="card">
+        <div class="icon">🧬</div>
+        <div class="text"><h3>Biology</h3></div>
+    </div>
+    <div class="card" data-file="12-hindi.html">
+        <div class="icon">📖</div>
+        <div class="text"><h3>Hindi</h3></div>
+    </div>
+    <div class="card" data-file="12-english.html">
+        <div class="icon">📘</div>
+        <div class="text"><h3>English</h3></div>
+    </div>
+
+    <!-- CLASS 12 COMMERCE -->
+    <div class="section-title">Class 12 – Commerce</div>
+    <div class="card">
+        <div class="icon">📘</div>
+        <div class="text"><h3>Accountancy</h3></div>
+    </div>
+    <div class="card">
+        <div class="icon">🏢</div>
+        <div class="text"><h3>Business Studies</h3></div>
+    </div>
+    <div class="card">
+        <div class="icon">💹</div>
+        <div class="text"><h3>Economics</h3></div>
+    </div>
+    <div class="card" data-file="12-hindi.html">
+        <div class="icon">📖</div>
+        <div class="text"><h3>Hindi</h3></div>
+    </div>
+    <div class="card" data-file="12-english.html">
+        <div class="icon">📘</div>
+        <div class="text"><h3>English</h3></div>
+    </div>
+
+    <!-- SPECIAL -->
+    <div class="section-title">Special Objective Tests</div>
+    <div class="card">
+        <div class="icon">🧠</div>
+        <div class="text"><h3>MAX Objective Test</h3></div>
+    </div>
+    <div class="card" id="gkCard">
+        <div class="icon">🌐</div>
+        <div class="text"><h3>GK / GS</h3></div>
+    </div>
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+<div class="bottom-nav">
+    <button class="nav-btn active" id="homeBtn">
+        <span style="font-size:22px;margin-bottom:6px;">🏠</span>
+        Home
+    </button>
+    <button class="nav-btn" id="helpBtn">
+        <span style="font-size:22px;margin-bottom:6px;">❓</span>
+        Help
+    </button>
+    <button class="nav-btn" id="menuBtn">
+        <span style="font-size:22px;margin-bottom:6px;">⚙️</span>
+        Menu
+    </button>
+</div>
+
+<!-- MENU MODAL -->
+<div class="menu-modal" id="menuModal">
+    <div class="menu-header">
+        <h3>⚙️ Settings & More</h3>
+        <button class="close-menu" id="closeMenu">✕</button>
+    </div>
+    
+    <div class="theme-toggle" id="themeToggle">
+        <div class="theme-info">
+            <span style="font-size:24px;margin-right:20px;">🌓</span>
+            <div>
+                <h4>Dark Mode</h4>
+                <p>Switch between light and dark themes</p>
+            </div>
+        </div>
+        <div class="toggle-switch" id="themeSwitch"></div>
+    </div>
+    
+    <div class="menu-option" id="languageOption">
+        <span style="font-size:24px;margin-right:20px;">🌐</span>
+        <div>
+            <h4>Language</h4>
+            <p>Change app language (English/Hindi)</p>
+        </div>
+    </div>
+    
+    <div class="menu-option" id="fontSizeOption">
+        <span style="font-size:24px;margin-right:20px;">🔤</span>
+        <div>
+            <h4>Font Size</h4>
+            <p>Adjust text size for better readability</p>
+        </div>
+    </div>
+    
+    <div class="menu-option" id="notificationOption">
+        <span style="font-size:24px;margin-right:20px;">🔔</span>
+        <div>
+            <h4>Notifications</h4>
+            <p>Manage test alerts and updates</p>
+        </div>
+    </div>
+    
+    <div class="menu-option" id="aboutOption">
+        <span style="font-size:24px;margin-right:20px;">ℹ️</span>
+        <div>
+            <h4>About App</h4>
+            <p>Version info and school details</p>
+        </div>
+    </div>
+    
+    <div class="menu-option" id="feedbackOption">
+        <span style="font-size:24px;margin-right:20px;">💌</span>
+        <div>
+            <h4>Feedback</h4>
+            <p>Share your suggestions with us</p>
+        </div>
+    </div>
+</div>
+
+<!-- HELP MODAL -->
+<div class="help-modal" id="helpModal">
+
+    <!-- HEADER WITH CLOSE -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <h3 style="color:#1e3c72;font-size:22px;">❓ How to Use This App</h3>
+        <button onclick="closeHelp()"
+            style="border:none;width:36px;height:36px;border-radius:10px;
+                   background:rgba(74,111,255,0.1);color:#4a6fff;
+                   font-size:20px;cursor:pointer;">✕</button>
+    </div>
+
+    <div class="help-content">
+
+        <div class="help-item">
+            <div class="help-text">
+                <h4><span style="font-size:20px;">📚</span> Subject Selection</h4>
+                <p>Tap on any subject card to view its detailed syllabus. Available subjects will open immediately.</p>
+            </div>
+            <button class="voice-btn"
+                data-text="Tap on any subject card to view its detailed syllabus. Available subjects will open immediately.">
+                🎤
+            </button>
+        </div>
+
+        <div class="help-item">
+            <div class="help-text">
+                <h4><span style="font-size:20px;">🎨</span> Theme & Language</h4>
+                <p>Use the Menu button to change between Light Dark mode and switch languages English or Hindi.</p>
+            </div>
+            <button class="voice-btn"
+                data-text="Use the Menu button to change between Light Dark mode and switch languages English or Hindi.">
+                🎤
+            </button>
+        </div>
+
+        <div class="help-item">
+            <div class="help-text">
+                <h4><span style="font-size:20px;">📱</span> Navigation</h4>
+                <p>Bottom navigation provides quick access to Home, Help, and Settings menu.</p>
+            </div>
+            <button class="voice-btn"
+                data-text="Bottom navigation provides quick access to Home, Help, and Settings menu.">
+                🎤
+            </button>
+        </div>
+
+        <div class="help-item">
+            <div class="help-text">
+                <h4><span style="font-size:20px;">🚧</span> Coming Soon</h4>
+                <p>Subjects marked as coming soon will be available in future updates.</p>
+            </div>
+            <button class="voice-btn"
+                data-text="Subjects marked as coming soon will be available in future updates.">
+                🎤
+            </button>
+        </div>
+
+        <div class="help-item">
+            <div class="help-text">
+                <h4><span style="font-size:20px;">📞</span> Contact Support</h4>
+                <p>For technical issues, email support at m m school dot e d u dot in or call plus 91.</p>
+            </div>
+            <button class="voice-btn"
+                data-text="For technical issues, email support at m m school dot e d u dot in or call plus 91.">
+                🎤
+            </button>
+        </div>
+
+    </div>
+
+    <!-- BOTTOM CLOSE BUTTON -->
+    <button onclick="closeHelp()"
+        style="margin-top:20px;width:100%;padding:14px;
+               border:none;border-radius:16px;
+               background:linear-gradient(135deg,#4a6fff,#8a2fff);
+               color:#fff;font-weight:800;font-size:15px;cursor:pointer;">
+        Close
+    </button>
+</div>
+    <button onclick="closeHelp()" style="margin-top:20px;padding:14px 32px;border:none;border-radius:16px;background:linear-gradient(135deg,#4a6fff 0%,#8a2fff 100%);color:#fff;font-weight:800;font-size:15px;cursor:pointer;width:100%;transition:all 0.3s ease;">
+        Got it!
+    </button>
+</div>
+
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay" id="modalOverlay"></div>
+
+<!-- LOADING -->
+<div id="loadingPopup" class="loading-overlay">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <p style="color: #4a6fff; font-weight: 700; font-size: 16px;">Loading Syllabus...</p>
+    </div>
+</div>
+
+<!-- COMING SOON -->
+<div id="comingPopup" class="coming-overlay">
+    <div class="coming-box">
+        <h2>🚧 Coming Soon</h2>
+        <p>This feature is currently under development</p>
+        <button onclick="closeComing()">Continue</button>
+    </div>
+</div>
+
+<script>
+const loading = document.getElementById("loadingPopup");
+const coming = document.getElementById("comingPopup");
+const menuModal = document.getElementById("menuModal");
+const helpModal = document.getElementById("helpModal");
+const modalOverlay = document.getElementById("modalOverlay");
+const themeToggle = document.getElementById("themeToggle");
+const themeSwitch = document.getElementById("themeSwitch");
+const navBtns = document.querySelectorAll('.nav-btn');
+
+// Navigation button handling
+navBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+        navBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const btnId = this.id;
+        if (btnId === 'homeBtn') {
+            // Already on home page
+            closeAllModals();
+        } else if (btnId === 'helpBtn') {
+            openHelp();
+        } else if (btnId === 'menuBtn') {
+            openMenu();
+        }
+    });
+});
+
+// Open/Close Menu
+function openMenu() {
+    menuModal.classList.add('show');
+    modalOverlay.classList.add('show');
+    modalOverlay.style.display = 'block';
+}
+
+function closeMenu() {
+    menuModal.classList.remove('show');
+    modalOverlay.classList.remove('show');
+    setTimeout(() => modalOverlay.style.display = 'none', 300);
+    document.getElementById('menuBtn').classList.remove('active');
+}
+
+// Open/Close Help
+function openHelp() {
+    helpModal.classList.add('show');
+    modalOverlay.classList.add('show');
+    modalOverlay.style.display = 'block';
+}
+
+function closeHelp() {
+    helpModal.classList.remove('show');
+    modalOverlay.classList.remove('show');
+    setTimeout(() => modalOverlay.style.display = 'none', 300);
+    document.getElementById('helpBtn').classList.remove('active');
+}
+
+function closeAllModals() {
+    closeMenu();
+    closeHelp();
+}
+
+// Close modals when clicking overlay
+modalOverlay.addEventListener('click', closeAllModals);
+
+// Close menu button
+document.getElementById('closeMenu').addEventListener('click', closeMenu);
+
+// Coming Soon popup functions
+function closeComing() {
+    coming.style.display = "none";
+    modalOverlay.classList.remove('show');
+    setTimeout(() => modalOverlay.style.display = 'none', 300);
+}
+
+// Theme toggle functionality
+let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+// Apply saved theme
+if (isDarkMode) {
+    document.body.classList.add('dark-mode');
+    document.body.classList.remove('light-mode');
+    themeSwitch.classList.add('active');
+}
+
+themeToggle.addEventListener('click', () => {
+    isDarkMode = !isDarkMode;
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    document.body.classList.toggle('light-mode', !isDarkMode);
+    themeSwitch.classList.toggle('active', isDarkMode);
+    localStorage.setItem('darkMode', isDarkMode);
+});
+
+// Menu options functionality
+document.getElementById('languageOption').addEventListener('click', () => {
+    coming.style.display = "flex";
+    modalOverlay.style.display = "block";
+    modalOverlay.classList.add('show');
+    closeMenu();
+});
+
+document.getElementById('fontSizeOption').addEventListener('click', () => {
+    coming.style.display = "flex";
+    modalOverlay.style.display = "block";
+    modalOverlay.classList.add('show');
+    closeMenu();
+});
+
+document.getElementById('notificationOption').addEventListener('click', () => {
+    coming.style.display = "flex";
+    modalOverlay.style.display = "block";
+    modalOverlay.classList.add('show');
+    closeMenu();
+});
+
+document.getElementById('aboutOption').addEventListener('click', () => {
+    coming.style.display = "flex";
+    modalOverlay.style.display = "block";
+    modalOverlay.classList.add('show');
+    closeMenu();
+});
+
+document.getElementById('feedbackOption').addEventListener('click', () => {
+    coming.style.display = "flex";
+    modalOverlay.style.display = "block";
+    modalOverlay.classList.add('show');
+    closeMenu();
+});
+
+// Original card click functionality
+document.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent overlay click
+        const file = card.dataset.file;
+        if (file) {
+            loading.style.display = "flex";
+            setTimeout(() => window.location.href = file, 2500);
+        } else {
+            coming.style.display = "flex";
+            modalOverlay.style.display = "block";
+            modalOverlay.classList.add('show');
+        }
+    });
+});
+
+// Ripple effect for cards
+document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', function(e) {
+        let ripple = document.createElement('span');
+        let rect = this.getBoundingClientRect();
+        let size = Math.max(rect.width, rect.height);
+        let x = e.clientX - rect.left - size / 2;
+        let y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            width: ${size}px;
+            height: ${size}px;
+            top: ${y}px;
+            left: ${x}px;
+            pointer-events: none;
+        `;
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    });
+});
+
+// Add CSS for ripple animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+let currentSpeech = null;
+
+document.querySelectorAll(".voice-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const text = btn.dataset.text;
+    
+    // अगर पहले से आवाज चल रही है तो बंद करो
+    if (currentSpeech) {
+      speechSynthesis.cancel();
+      document.querySelectorAll(".voice-btn")
+        .forEach(b => b.classList.remove("playing"));
+    }
+    
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "en-US"; // हिंदी चाहिए तो "hi-IN"
+    speech.rate = 0.9;
+    speech.pitch = 1;
+    
+    btn.classList.add("playing");
+    currentSpeech = speech;
+    
+    speech.onend = () => {
+      btn.classList.remove("playing");
+      currentSpeech = null;
+    };
+    
+    speechSynthesis.speak(speech);
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 10th – social science (Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  // 1–15 इतिहास (History)
+  { q: "फ्रांसीसी क्रांति कब हुई?", o: ["1789", "1776", "1857", "1917"], a: 0 },
+  { q: "फ्रांसीसी क्रांति का नारा क्या था?", o: ["स्वराज", "सत्य", "स्वतंत्रता, समानता, भ्रातृत्व", "इंकलाब"], a: 2 },
+  { q: "रूस की क्रांति कब हुई?", o: ["1905", "1917", "1920", "1930"], a: 1 },
+  { q: "रूस की क्रांति के नेता कौन थे?", o: ["लेनिन", "स्टालिन", "हिटलर", "मुसोलिनी"], a: 0 },
+  { q: "नाजीवाद किस देश से जुड़ा है?", o: ["इटली", "जर्मनी", "रूस", "फ्रांस"], a: 1 },
+  { q: "हिटलर किस देश का शासक था?", o: ["फ्रांस", "इटली", "जर्मनी", "जापान"], a: 2 },
+  { q: "इटली में फासीवाद का जनक कौन था?", o: ["हिटलर", "लेनिन", "मुसोलिनी", "नेपोलियन"], a: 2 },
+  { q: "औद्योगिक क्रांति सबसे पहले किस देश में हुई?", o: ["फ्रांस", "अमेरिका", "जर्मनी", "इंग्लैंड"], a: 3 },
+  { q: "औद्योगिक क्रांति का प्रमुख प्रभाव क्या था?", o: ["खेती", "शहरों का विकास", "वनों का विकास", "धर्म"], a: 1 },
+  { q: "राष्ट्रीयता का उदय किस शताब्दी में हुआ?", o: ["16वीं", "17वीं", "18वीं", "19वीं"], a: 3 },
+  { q: "भारत में असहयोग आंदोलन कब शुरू हुआ?", o: ["1917", "1919", "1920", "1930"], a: 2 },
+  { q: "महात्मा गांधी ने असहयोग आंदोलन क्यों शुरू किया?", o: ["जलियांवाला बाग", "रॉलेट एक्ट", "खिलाफत", "सभी"], a: 3 },
+  { q: "भारत छोड़ो आंदोलन कब हुआ?", o: ["1935", "1940", "1942", "1945"], a: 2 },
+  { q: "जलियांवाला बाग हत्याकांड कब हुआ?", o: ["1917", "1918", "1919", "1920"], a: 2 },
+  { q: "स्वदेशी आंदोलन किससे जुड़ा था?", o: ["विदेशी वस्तुओं का बहिष्कार", "कर माफी", "भूमि सुधार", "शिक्षा"], a: 0 },
+  
+  // 16–25 नागरिक शास्त्र (Civics)
+  { q: "लोकतंत्र की मुख्य विशेषता क्या है?", o: ["राजा का शासन", "जनता का शासन", "सेना शासन", "तानाशाही"], a: 1 },
+  { q: "भारत का संविधान कब लागू हुआ?", o: ["15 अगस्त 1947", "26 जनवरी 1950", "2 अक्टूबर 1949", "26 नवंबर 1949"], a: 1 },
+  { q: "भारतीय संविधान के निर्माता कौन हैं?", o: ["महात्मा गांधी", "नेहरू", "डॉ. भीमराव अंबेडकर", "राजेंद्र प्रसाद"], a: 2 },
+  { q: "भारतीय संविधान में कितने मूल अधिकार हैं?", o: ["5", "6", "7", "8"], a: 1 },
+  { q: "मतदान का अधिकार किस आयु में मिलता है?", o: ["16", "18", "21", "25"], a: 1 },
+  { q: "भारत में गणराज्य दिवस कब मनाया जाता है?", o: ["15 अगस्त", "26 जनवरी", "2 अक्टूबर", "14 नवंबर"], a: 1 },
+  { q: "संघीय शासन प्रणाली का अर्थ क्या है?", o: ["एक केंद्र", "दो स्तर", "तीन स्तर", "राजा शासन"], a: 1 },
+  { q: "भारतीय संसद के कितने सदन हैं?", o: ["एक", "दो", "तीन", "चार"], a: 1 },
+  { q: "लोकसभा का कार्यकाल कितने वर्ष का होता है?", o: ["4", "5", "6", "7"], a: 1 },
+  { q: "प्रधानमंत्री किस सदन का सदस्य होता है?", o: ["लोकसभा", "राज्यसभा", "दोनों", "कोई नहीं"], a: 2 },
+  
+  // 26–40 भूगोल (Geography)
+  { q: "भारत किस महाद्वीप में स्थित है?", o: ["यूरोप", "अफ्रीका", "एशिया", "ऑस्ट्रेलिया"], a: 2 },
+  { q: "भारत की राजधानी क्या है?", o: ["मुंबई", "दिल्ली", "कोलकाता", "चेन्नई"], a: 1 },
+  { q: "भारत में मानसून किस दिशा से आता है?", o: ["उत्तर-पूर्व", "दक्षिण-पश्चिम", "उत्तर-पश्चिम", "दक्षिण-पूर्व"], a: 1 },
+  { q: "भारत की सबसे लंबी नदी कौन सी है?", o: ["गंगा", "यमुना", "ब्रह्मपुत्र", "गोदावरी"], a: 0 },
+  { q: "कृषि भारत की मुख्य आजीविका क्यों है?", o: ["जल", "मिट्टी", "रोजगार", "सभी"], a: 3 },
+  { q: "भारत में रबी फसल कब बोई जाती है?", o: ["गर्मी", "वर्षा", "सर्दी", "बसंत"], a: 2 },
+  { q: "खरीफ फसल कब बोई जाती है?", o: ["सर्दी", "गर्मी", "वर्षा", "शरद"], a: 2 },
+  { q: "भारत का सबसे बड़ा राज्य क्षेत्रफल में कौन सा है?", o: ["बिहार", "मध्य प्रदेश", "राजस्थान", "उत्तर प्रदेश"], a: 2 },
+  { q: "बिहार की राजधानी क्या है?", o: ["गया", "पटना", "मुजफ्फरपुर", "भागलपुर"], a: 1 },
+  { q: "कोयला किस प्रकार का संसाधन है?", o: ["नवीकरणीय", "अनवीकरणीय", "मानव निर्मित", "जैविक"], a: 1 },
+  { q: "जल संसाधन का मुख्य स्रोत क्या है?", o: ["नदी", "वर्षा", "समुद्र", "सभी"], a: 3 },
+  { q: "वनों का मुख्य लाभ क्या है?", o: ["लकड़ी", "पर्यावरण संतुलन", "ईंधन", "सभी"], a: 3 },
+  { q: "भारत में सबसे अधिक जनसंख्या वाला राज्य कौन सा है?", o: ["बिहार", "महाराष्ट्र", "उत्तर प्रदेश", "पश्चिम बंगाल"], a: 2 },
+  { q: "जनसंख्या घनत्व का अर्थ क्या है?", o: ["कुल जनसंख्या", "क्षेत्रफल", "प्रति वर्ग किमी जनसंख्या", "जन्म दर"], a: 2 },
+  { q: "भूमि उपयोग का अर्थ क्या है?", o: ["खेती", "वन", "भूमि का प्रयोग", "निवास"], a: 2 },
+  
+  // 41–50 अर्थशास्त्र (Economics)
+  { q: "अर्थव्यवस्था के कितने क्षेत्र होते हैं?", o: ["दो", "तीन", "चार", "पाँच"], a: 1 },
+  { q: "प्राथमिक क्षेत्र का उदाहरण क्या है?", o: ["खेती", "कारखाना", "सेवा", "व्यापार"], a: 0 },
+  { q: "द्वितीयक क्षेत्र किससे जुड़ा है?", o: ["खेती", "उद्योग", "सेवा", "व्यापार"], a: 1 },
+  { q: "तृतीयक क्षेत्र किससे संबंधित है?", o: ["सेवा", "उद्योग", "कृषि", "खनन"], a: 0 },
+  { q: "राष्ट्रीय आय का अर्थ क्या है?", o: ["देश की आय", "सरकार की आय", "जनता की आय", "कुल उत्पादन मूल्य"], a: 3 },
+  { q: "गरीबी रेखा से नीचे रहने वाले को क्या कहते हैं?", o: ["धनी", "गरीब", "मध्यम", "किसान"], a: 1 },
+  { q: "बेरोजगारी का अर्थ क्या है?", o: ["काम", "काम की कमी", "काम न होना", "कम वेतन"], a: 2 },
+  { q: "बैंक का मुख्य कार्य क्या है?", o: ["पैसा छापना", "जमा व ऋण", "कर वसूली", "व्यापार"], a: 1 },
+  { q: "वैश्वीकरण का अर्थ क्या है?", o: ["देशी व्यापार", "अंतरराष्ट्रीय संपर्क", "कृषि", "उद्योग"], a: 1 },
+  { q: "सहकारी संस्था का उद्देश्य क्या है?", o: ["लाभ", "सेवा", "शोषण", "कर"], a: 1 }
+];
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;font-family:system-ui}
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(135deg,#e8f0ff,#f3eaff);
+}
+
+/* HEADER */
+.header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:linear-gradient(135deg,#1e3c72,#4a6fff);
+  color:#fff;
+  padding:18px;
+  text-align:center;
+  box-shadow:0 12px 30px rgba(0,0,0,.35);
+}
+.header h1{
+  margin:0;
+  font-size:18px;
+  font-weight:900;
+}
+.header p{
+  margin-top:4px;
+  font-size:12px;
+  opacity:.9;
+}
+
+/* CONTAINER */
+.container{
+  max-width:540px;
+  margin:auto;
+  padding:16px;
+}
+
+/* CARD */
+.card{
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(8px);
+  border-radius:22px;
+  padding:16px;
+  margin-bottom:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 18px 40px rgba(0,0,0,.18);
+  animation:fadeUp .4s ease;
+  transition:.25s;
+}
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 26px 55px rgba(0,0,0,.25);
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:none}
+}
+
+/* LEFT INFO */
+.info{
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+.avatar{
+  width:52px;
+  height:52px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#4a6fff,#1e3c72);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  font-weight:900;
+  box-shadow:0 10px 26px rgba(0,0,0,.35);
+}
+.name{
+  font-weight:900;
+  font-size:15px;
+  color:#222;
+}
+.meta{
+  font-size:12px;
+  color:#555;
+  margin-top:2px;
+}
+
+/* DELETE BUTTON */
+.del{
+  background:linear-gradient(135deg,#ff5252,#d32f2f);
+  border:none;
+  color:#fff;
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  font-size:18px;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  transition:.25s;
+}
+.del:hover{
+  transform:scale(1.1);
+}
+
+/* EMPTY */
+.empty{
+  text-align:center;
+  color:#666;
+  margin-top:40px;
+  font-weight:700;
+}
+
+/* CONFIRM POPUP */
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.box{
+  background:#fff;
+  width:90%;
+  max-width:320px;
+  padding:24px;
+  border-radius:24px;
+  text-align:center;
+  box-shadow:0 30px 70px rgba(0,0,0,.45);
+  animation:pop .3s ease;
+}
+@keyframes pop{
+  from{opacity:0;transform:scale(.85)}
+  to{opacity:1;transform:scale(1)}
+}
+.box h3{
+  margin:0;
+  font-size:18px;
+  color:#1e3c72;
+}
+.box p{
+  font-size:13px;
+  color:#555;
+  margin:10px 0 20px;
+}
+.actions{
+  display:flex;
+  gap:12px;
+}
+.actions button{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:16px;
+  font-weight:900;
+  cursor:pointer;
+}
+.cancel{background:#eee}
+.ok{background:linear-gradient(135deg,#ff5252,#d32f2f);color:#fff}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>Admin Dashboard</h1>
+  <p>M.M Public School Mundeshwari</p>
+</div>
+
+<div class="container" id="studentList">
+  <!-- students load here -->
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="popup" id="confirmPopup">
+  <div class="box">
+    <h3>Delete Student?</h3>
+    <p>This student record will be permanently removed.</p>
+    <div class="actions">
+      <button class="cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="ok" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import {
+  getDatabase, ref, onValue, remove
+} from
+"https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyCy1r8BXbe-W9UBsCrFDFgkHy-j7lYFwYg",
+  databaseURL:"https://mmpublicschoolmundeshwar-233a4-default-rtdb.firebaseio.com"
+});
+const db = getDatabase(app);
+
+const list = document.getElementById("studentList");
+let deleteKey = "";
+
+/* REALTIME STUDENTS */
+onValue(ref(db,"students"), snap=>{
+  list.innerHTML = "";
+  if(!snap.exists()){
+    list.innerHTML = `<div class="empty">No students found</div>`;
+    return;
+  }
+
+  Object.values(snap.val()).forEach(s=>{
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <div class="info">
+        <div class="avatar">${s.name.charAt(0).toUpperCase()}</div>
+        <div>
+          <div class="name">${s.name}</div>
+          <div class="meta">${s.schoolId}</div>
+          <div class="meta">Signup: ${s.time}</div>
+        </div>
+      </div>
+      <button class="del" onclick="askDelete('${s.schoolId}')">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    `;
+    list.appendChild(div);
+  });
+});
+
+/* DELETE */
+function askDelete(id){
+  deleteKey = id;
+  confirmPopup.style.display="flex";
+}
+function closeConfirm(){
+  confirmPopup.style.display="none";
+  deleteKey="";
+}
+async function confirmDelete(){
+  await remove(ref(db,"students/"+deleteKey));
+  closeConfirm();
+}
+
+/* expose */
+window.askDelete = askDelete;
+window.closeConfirm = closeConfirm;
+window.confirmDelete = confirmDelete;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,sans-serif;
+  overflow-x:hidden;
+}
+
+/* 🔔 ICON */
+.notify-icon{
+  position:relative;
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border-radius:50%;
+}
+.notify-icon:hover{background:#f1f5f9}
+
+/* COUNT */
+.notify-count{
+  position:absolute;
+  top:-4px;
+  right:-4px;
+  min-width:18px;
+  height:18px;
+  background:#e53935;
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+  border-radius:999px;
+  line-height:18px;
+  text-align:center;
+  display:none;
+}
+
+/* POPUP */
+.notify-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+}
+
+.notify-box{
+  width:90%;
+  max-width:380px;
+  background:#fff;
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+
+/* HEADER */
+.notify-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+.notify-title{
+  font-weight:700;
+  color:#1e88e5;
+}
+.notify-close{
+  cursor:pointer;
+  font-size:18px;
+}
+
+/* IMPORTANT FIXED TOP */
+.important-wrap{
+  position:sticky;
+  top:0;
+  background:#fff;
+  z-index:5;
+  padding-bottom:6px;
+}
+
+/* LIST */
+.notify-list{
+  max-height:260px;
+  overflow-y:auto;
+}
+
+/* CARD */
+.notify-item{
+  background:#f9f9f9;
+  padding:10px;
+  border-radius:12px;
+  margin-bottom:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+.notify-item small{
+  font-size:11px;
+  color:#777;
+}
+
+/* IMPORTANT CARD */
+.notify-item.important{
+  border-left:5px solid #e53935;
+  background:linear-gradient(135deg,#fff5f5,#ffffff);
+}
+.notify-badge{
+  background:#e53935;
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+  padding:2px 6px;
+  border-radius:6px;
+  margin-left:6px;
+}

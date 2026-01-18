@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 12th – physics (Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  //1
+  { q: "विद्युत धारा की SI इकाई क्या है?", o: ["वोल्ट", "ओम", "एम्पियर", "वाट"], a: 2 },
+  //2
+  { q: "ओम का नियम किससे संबंधित है?", o: ["धारा", "विभव", "प्रतिरोध", "तीनों"], a: 3 },
+  //3
+  { q: "प्रतिरोध की SI इकाई क्या है?", o: ["वोल्ट", "ओम", "एम्पियर", "जूल"], a: 1 },
+  //4
+  { q: "यदि V = IR हो तो यह किस नियम का सूत्र है?", o: ["किर्चहॉफ", "ओम", "फैराडे", "लॉरेंज"], a: 1 },
+  //5
+  { q: "विद्युत शक्ति का सूत्र क्या है?", o: ["VI", "IR", "V/I", "I/R"], a: 0 },
+  
+  //6
+  { q: "विद्युत ऊर्जा की SI इकाई क्या है?", o: ["वाट", "जूल", "वोल्ट", "एम्पियर"], a: 1 },
+  //7
+  { q: "1 किलोवाट घंटा = ?", o: ["3.6×10⁶ J", "360 J", "36 J", "3.6 J"], a: 0 },
+  //8
+  { q: "किर्चहॉफ का पहला नियम किससे संबंधित है?", o: ["धारा", "विभव", "शक्ति", "ऊर्जा"], a: 0 },
+  //9
+  { q: "किर्चहॉफ का दूसरा नियम किससे संबंधित है?", o: ["धारा", "विभवांतर", "प्रतिरोध", "ऊर्जा"], a: 1 },
+  //10
+  { q: "सेल की विद्युत वाहक बल (EMF) की इकाई क्या है?", o: ["एम्पियर", "ओम", "वोल्ट", "जूल"], a: 2 },
+  
+  //11
+  { q: "चुंबकीय क्षेत्र की SI इकाई क्या है?", o: ["टेस्ला", "वेबर", "हेनरी", "गॉस"], a: 0 },
+  //12
+  { q: "धारा वहन करने वाले चालक के चारों ओर क्या उत्पन्न होता है?", o: ["विद्युत क्षेत्र", "चुंबकीय क्षेत्र", "गुरुत्व क्षेत्र", "ऊष्मा"], a: 1 },
+  //13
+  { q: "फ्लेमिंग का दाहिना हाथ नियम किससे संबंधित है?", o: ["मोटर", "जनरेटर", "धारा", "प्रतिरोध"], a: 1 },
+  //14
+  { q: "फ्लेमिंग का बायाँ हाथ नियम किससे संबंधित है?", o: ["जनरेटर", "ट्रांसफॉर्मर", "मोटर", "बैटरी"], a: 2 },
+  //15
+  { q: "चुंबकीय फ्लक्स की इकाई क्या है?", o: ["टेस्ला", "वेबर", "हेनरी", "एम्पियर"], a: 1 },
+  
+  //16
+  { q: "फैराडे का नियम किससे संबंधित है?", o: ["स्थिर विद्युत", "चुंबकत्व", "विद्युत चुम्बकीय प्रेरण", "ऊर्जा"], a: 2 },
+  //17
+  { q: "लेन्ज का नियम किस सिद्धांत पर आधारित है?", o: ["ऊर्जा संरक्षण", "द्रव्यमान संरक्षण", "संवेग संरक्षण", "आवेश संरक्षण"], a: 0 },
+  //18
+  { q: "प्रेरित धारा की दिशा कौन बताता है?", o: ["फैराडे", "लेन्ज", "ओम", "किर्चहॉफ"], a: 1 },
+  //19
+  { q: "AC धारा का पूर्ण रूप क्या है?", o: ["Alternate Current", "Active Current", "Applied Current", "Average Current"], a: 0 },
+  //20
+  { q: "DC धारा का पूर्ण रूप क्या है?", o: ["Direct Current", "Dynamic Current", "Dual Current", "Derived Current"], a: 0 },
+  
+  //21
+  { q: "AC का औसत मान किसके लिए शून्य होता है?", o: ["आवेश", "धारा", "विभव", "शक्ति"], a: 1 },
+  //22
+  { q: "ट्रांसफॉर्मर किस धारा पर कार्य करता है?", o: ["DC", "AC", "दोनों", "कोई नहीं"], a: 1 },
+  //23
+  { q: "ट्रांसफॉर्मर में कौन-सा भाग अधिक कुंडलियों वाला होता है?", o: ["प्राइमरी", "सेकेंडरी", "कोर", "दोनों"], a: 3 },
+  //24
+  { q: "प्रकाश की चाल निर्वात में कितनी होती है?", o: ["3×10⁸ m/s", "3×10⁶ m/s", "3×10⁵ m/s", "3×10⁴ m/s"], a: 0 },
+  //25
+  { q: "अपवर्तनांक किसका अनुपात है?", o: ["वेगों का", "तरंगदैर्घ्य का", "आवृत्ति का", "ऊर्जा का"], a: 0 },
+  
+  //26
+  { q: "स्नेल का नियम किससे संबंधित है?", o: ["परावर्तन", "अपवर्तन", "विवर्तन", "ध्रुवण"], a: 1 },
+  //27
+  { q: "पूर्ण आंतरिक परावर्तन कब होता है?", o: ["n₁<n₂", "n₁>n₂", "n₁=n₂", "कोई नहीं"], a: 1 },
+  //28
+  { q: "लेज़र का पूर्ण रूप क्या है?", o: ["Light Amplification by Stimulated Emission of Radiation", "Light Absorption System", "Laser Applied Radiation", "None"], a: 0 },
+  //29
+  { q: "फोटो विद्युत प्रभाव किसने खोजा?", o: ["न्यूटन", "आइंस्टीन", "हर्ट्ज", "बोहर"], a: 2 },
+  //30
+  { q: "फोटो विद्युत प्रभाव किस पर निर्भर करता है?", o: ["तीव्रता", "आवृत्ति", "दूरी", "समय"], a: 1 },
+  
+  //31
+  { q: "प्लांक स्थिरांक की इकाई क्या है?", o: ["J·s", "J", "s", "Hz"], a: 0 },
+  //32
+  { q: "परमाणु का नाभिक किससे बना होता है?", o: ["इलेक्ट्रॉन", "प्रोटॉन व न्यूट्रॉन", "न्यूट्रॉन", "प्रोटॉन"], a: 1 },
+  //33
+  { q: "बोहर मॉडल किसके लिए है?", o: ["हाइड्रोजन परमाणु", "हीलियम", "सभी परमाणु", "आयन"], a: 0 },
+  //34
+  { q: "इलेक्ट्रॉन का आवेश कितना होता है?", o: ["+1.6×10⁻¹⁹ C", "-1.6×10⁻¹⁹ C", "0", "1 C"], a: 1 },
+  //35
+  { q: "न्यूक्लियर विखंडन किससे संबंधित है?", o: ["ऊर्जा", "प्रकाश", "ऊष्मा", "ध्वनि"], a: 0 },
+  
+  //36
+  { q: "नाभिकीय संलयन कहाँ होता है?", o: ["परमाणु बम", "हाइड्रोजन बम", "सूर्य", "रिएक्टर"], a: 2 },
+  //37
+  { q: "रेडियोधर्मिता की खोज किसने की?", o: ["मैडम क्यूरी", "बेकेरल", "रदरफोर्ड", "थॉमसन"], a: 1 },
+  //38
+  { q: "अल्फा किरणें क्या होती हैं?", o: ["इलेक्ट्रॉन", "प्रोटॉन", "हीलियम नाभिक", "न्यूट्रॉन"], a: 2 },
+  //39
+  { q: "बीटा किरणें क्या होती हैं?", o: ["प्रोटॉन", "न्यूट्रॉन", "इलेक्ट्रॉन", "फोटॉन"], a: 2 },
+  //40
+  { q: "गामा किरणें क्या होती हैं?", o: ["कण", "ध्वनि", "विद्युत चुंबकीय तरंग", "आयन"], a: 2 },
+  
+  //41
+  { q: "डायोड किसका उदाहरण है?", o: ["अर्धचालक", "चालक", "कुचालक", "सुपरकंडक्टर"], a: 0 },
+  //42
+  { q: "PN जंक्शन क्या है?", o: ["दो चालक", "दो कुचालक", "दो अर्धचालक", "दो धातु"], a: 2 },
+  //43
+  { q: "ट्रांजिस्टर में कितने टर्मिनल होते हैं?", o: ["2", "3", "4", "5"], a: 1 },
+  //44
+  { q: "LED का पूर्ण रूप क्या है?", o: ["Light Emitting Diode", "Light Energy Device", "Low Emission Diode", "None"], a: 0 },
+  //45
+  { q: "डिजिटल इलेक्ट्रॉनिक्स किस संख्या प्रणाली पर आधारित है?", o: ["दशमलव", "द्विआधारी", "अष्टाधारी", "षोडश"], a: 1 },
+  
+  //46
+  { q: "लॉजिक गेट AND का आउटपुट 1 कब होता है?", o: ["किसी एक इनपुट पर", "दोनों इनपुट 1 पर", "दोनों 0 पर", "कभी नहीं"], a: 1 },
+  //47
+  { q: "OR गेट का आउटपुट 0 कब होता है?", o: ["दोनों इनपुट 1", "कोई एक 1", "दोनों 0", "कभी नहीं"], a: 2 },
+  //48
+  { q: "NOT गेट क्या करता है?", o: ["जोड़", "गुणा", "उलट", "भाग"], a: 2 },
+  //49
+  { q: "तरंग की आवृत्ति की इकाई क्या है?", o: ["मीटर", "सेकंड", "हर्ट्ज", "जूल"], a: 2 },
+  //50
+  { q: "ध्वनि तरंग किस प्रकार की तरंग है?", o: ["अनुप्रस्थ", "अनुदैर्ध्य", "विद्युत", "प्रकाश"], a: 1 }
+];
+
+console.log(questions.length); // ✅ 50 (पक्का)
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

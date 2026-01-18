@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 10th – Hindi (Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  // 1–10 : गद्य खंड
+  { q: "‘नेताजी का चश्मा’ पाठ के लेखक कौन हैं?", o: ["हरिशंकर परसाई", "यशपाल", "फणीश्वरनाथ रेणु", "मुंशी प्रेमचंद"], a: 0 },
+  { q: "नेताजी का चश्मा किस बात का प्रतीक है?", o: ["अंधविश्वास", "ईमानदारी", "दिखावा", "सच्चाई"], a: 2 },
+  { q: "‘बालगोबिन भगत’ पाठ के लेखक कौन हैं?", o: ["रामवृक्ष बेनीपुरी", "फणीश्वरनाथ रेणु", "जयशंकर प्रसाद", "महादेवी वर्मा"], a: 1 },
+  { q: "बालगोबिन भगत किसके भक्त थे?", o: ["राम", "कृष्ण", "शिव", "हनुमान"], a: 1 },
+  { q: "‘लखनवी अंदाज़’ के लेखक कौन हैं?", o: ["यशपाल", "हरिशंकर परसाई", "रामविलास शर्मा", "अज्ञेय"], a: 0 },
+  { q: "लखनवी अंदाज़ किस विषय पर आधारित है?", o: ["संस्कृति", "व्यंग्य", "इतिहास", "युद्ध"], a: 1 },
+  { q: "‘मानवीय करुणा की दिव्य चमक’ पाठ के लेखक कौन हैं?", o: ["महादेवी वर्मा", "सुमित्रानंदन पंत", "जयशंकर प्रसाद", "रामधारी सिंह दिनकर"], a: 0 },
+  { q: "इस पाठ का मुख्य भाव क्या है?", o: ["क्रोध", "करुणा", "वीरता", "भय"], a: 1 },
+  { q: "‘स्त्री शिक्षा के विरोधी कुतर्कों का खंडन’ किसने लिखा?", o: ["महादेवी वर्मा", "भारतेंदु हरिश्चंद्र", "रामवृक्ष बेनीपुरी", "जयशंकर प्रसाद"], a: 1 },
+  { q: "यह पाठ किस विषय से जुड़ा है?", o: ["राजनीति", "शिक्षा", "धर्म", "कला"], a: 1 },
+  
+  // 11–20 : पद्य खंड
+  { q: "‘साखी’ के कवि कौन हैं?", o: ["तुलसीदास", "कबीर", "सूरदास", "मीरा"], a: 1 },
+  { q: "कबीर की भाषा क्या कहलाती है?", o: ["अवधी", "ब्रज", "सधुक्कड़ी", "खड़ी बोली"], a: 2 },
+  { q: "‘पद’ किस कवि द्वारा रचित हैं?", o: ["तुलसीदास", "मीरा", "सूरदास", "कबीर"], a: 2 },
+  { q: "सूरदास किसके भक्त थे?", o: ["राम", "कृष्ण", "शिव", "हनुमान"], a: 1 },
+  { q: "‘राम-लक्ष्मण-परशुराम संवाद’ किस ग्रंथ से लिया गया है?", o: ["रामायण", "विनय पत्रिका", "रामचरितमानस", "गीतावली"], a: 2 },
+  { q: "इस संवाद के रचयिता कौन हैं?", o: ["वाल्मीकि", "तुलसीदास", "कबीर", "सूरदास"], a: 1 },
+  { q: "‘आत्मत्राण’ कविता के कवि कौन हैं?", o: ["जयशंकर प्रसाद", "दिनकर", "महादेवी वर्मा", "निराला"], a: 0 },
+  { q: "आत्मत्राण कविता का मुख्य भाव क्या है?", o: ["भय", "प्रार्थना", "वीरता", "दुख"], a: 1 },
+  { q: "‘उत्साह’ कविता के कवि कौन हैं?", o: ["निराला", "दिनकर", "प्रसाद", "पंत"], a: 0 },
+  { q: "उत्साह कविता में किसका वर्णन है?", o: ["प्रकृति", "देशप्रेम", "वीरता", "प्रेम"], a: 2 },
+  
+  // 21–30 : कविता एवं भाव
+  { q: "‘अट नहीं रही है’ कविता के कवि कौन हैं?", o: ["पंत", "प्रसाद", "निराला", "दिनकर"], a: 0 },
+  { q: "इस कविता में किसका सौंदर्य वर्णन है?", o: ["नारी", "प्रकृति", "नगर", "राजा"], a: 1 },
+  { q: "‘कन्यादान’ कविता के कवि कौन हैं?", o: ["नागार्जुन", "धूमिल", "हरिवंश राय बच्चन", "दिनकर"], a: 0 },
+  { q: "कन्यादान कविता किस विषय पर है?", o: ["विवाह", "समाज", "नारी चेतना", "परंपरा"], a: 2 },
+  { q: "‘नागार्जुन’ किस विधा के कवि हैं?", o: ["छायावादी", "प्रगतिवादी", "रीतिकाल", "भक्तिकाल"], a: 1 },
+  { q: "छायावाद के प्रमुख कवि कौन हैं?", o: ["प्रसाद", "कबीर", "तुलसी", "भारतेंदु"], a: 0 },
+  { q: "रीतिकाल किससे संबंधित है?", o: ["भक्ति", "श्रृंगार", "वीर", "ज्ञान"], a: 1 },
+  { q: "भक्तिकाल के कवि कौन हैं?", o: ["कबीर", "प्रसाद", "निराला", "पंत"], a: 0 },
+  { q: "प्रगतिवाद का संबंध किससे है?", o: ["समाज", "ईश्वर", "श्रृंगार", "भक्ति"], a: 0 },
+  { q: "‘दिनकर’ किस रस के कवि माने जाते हैं?", o: ["श्रृंगार", "वीर", "शांत", "करुण"], a: 1 },
+  
+  // 31–40 : व्याकरण
+  { q: "संज्ञा किसे कहते हैं?", o: ["काम", "नाम", "गुण", "क्रिया"], a: 1 },
+  { q: "‘राम दौड़ता है’ में क्रिया कौन सी है?", o: ["राम", "दौड़ता", "है", "दौड़"], a: 1 },
+  { q: "सर्वनाम शब्द किसके स्थान पर आता है?", o: ["संज्ञा", "क्रिया", "विशेषण", "अव्यय"], a: 0 },
+  { q: "विशेषण किसकी विशेषता बताता है?", o: ["क्रिया", "संज्ञा", "सर्वनाम", "अव्यय"], a: 1 },
+  { q: "काल कितने प्रकार के होते हैं?", o: ["दो", "तीन", "चार", "पाँच"], a: 1 },
+  { q: "वर्तमान काल का उदाहरण कौन सा है?", o: ["गया", "जाता है", "जाएगा", "जा चुका"], a: 1 },
+  { q: "लिंग कितने होते हैं?", o: ["दो", "तीन", "चार", "पाँच"], a: 0 },
+  { q: "वचन कितने होते हैं?", o: ["एक", "दो", "तीन", "चार"], a: 1 },
+  { q: "कारक कितने होते हैं?", o: ["6", "7", "8", "9"], a: 2 },
+  { q: "समास का अर्थ क्या है?", o: ["विस्तार", "संक्षेप", "अर्थ", "वाक्य"], a: 1 },
+  
+  // 41–50 : विविध
+  { q: "हिंदी किस लिपि में लिखी जाती है?", o: ["रोमन", "देवनागरी", "फारसी", "ब्राह्मी"], a: 1 },
+  { q: "खड़ी बोली हिंदी का आधार क्या है?", o: ["ब्रज", "अवधी", "दिल्ली-हरियाणवी", "मैथिली"], a: 2 },
+  { q: "हिंदी दिवस कब मनाया जाता है?", o: ["14 सितंबर", "15 अगस्त", "26 जनवरी", "2 अक्टूबर"], a: 0 },
+  { q: "भारतेंदु हरिश्चंद्र को क्या कहा जाता है?", o: ["आधुनिक हिंदी का जनक", "कवि", "नाटककार", "लेखक"], a: 0 },
+  { q: "कहानी किस विधा में आती है?", o: ["काव्य", "गद्य", "नाटक", "आलोचना"], a: 1 },
+  { q: "नाटक किसके लिए लिखा जाता है?", o: ["पढ़ने", "गाने", "मंचन", "लिखने"], a: 2 },
+  { q: "निबंध किस विधा का अंग है?", o: ["पद्य", "गद्य", "नाटक", "काव्य"], a: 1 },
+  { q: "हिंदी भाषा किस परिवार से संबंधित है?", o: ["द्रविड़", "इंडो-आर्यन", "चीनी", "सेमेटिक"], a: 1 },
+  { q: "हिंदी की उत्पत्ति किससे मानी जाती है?", o: ["संस्कृत", "पाली", "प्राकृत", "अपभ्रंश"], a: 3 },
+  { q: "हिंदी का मुख्य उद्देश्य क्या है?", o: ["मनोरंजन", "भाव अभिव्यक्ति", "ज्ञान", "सभी"], a: 3 }
+];
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 12th – political science (Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  //1
+  { q: "भारतीय संविधान कब लागू हुआ?", o: ["15 अगस्त 1947", "26 जनवरी 1950", "26 नवंबर 1949", "2 अक्टूबर 1950"], a: 1 },
+  //2
+  { q: "भारतीय संविधान सभा के अध्यक्ष कौन थे?", o: ["जवाहरलाल नेहरू", "डॉ. राजेंद्र प्रसाद", "डॉ. अंबेडकर", "सरदार पटेल"], a: 1 },
+  //3
+  { q: "संविधान प्रारूप समिति के अध्यक्ष कौन थे?", o: ["नेहरू", "राजेंद्र प्रसाद", "डॉ. अंबेडकर", "पटेल"], a: 2 },
+  //4
+  { q: "भारतीय संविधान की प्रस्तावना किससे शुरू होती है?", o: ["भारत एक गणराज्य", "हम भारत के लोग", "न्याय, स्वतंत्रता", "समानता"], a: 1 },
+  //5
+  { q: "भारत को गणराज्य कब घोषित किया गया?", o: ["15 अगस्त 1947", "26 जनवरी 1950", "26 नवंबर 1949", "30 जनवरी 1950"], a: 1 },
+  
+  //6
+  { q: "भारतीय संविधान में मौलिक अधिकार कितने हैं?", o: ["5", "6", "7", "8"], a: 1 },
+  //7
+  { q: "मौलिक अधिकार संविधान के किस भाग में हैं?", o: ["भाग–II", "भाग–III", "भाग–IV", "भाग–V"], a: 1 },
+  //8
+  { q: "संविधान का कौन-सा अनुच्छेद समानता का अधिकार देता है?", o: ["अनुच्छेद 14", "अनुच्छेद 19", "अनुच्छेद 21", "अनुच्छेद 32"], a: 0 },
+  //9
+  { q: "अनुच्छेद 21 किस अधिकार से संबंधित है?", o: ["स्वतंत्रता", "धर्म", "जीवन और व्यक्तिगत स्वतंत्रता", "समानता"], a: 2 },
+  //10
+  { q: "संविधान का रक्षक किसे कहा जाता है?", o: ["संसद", "सुप्रीम कोर्ट", "राष्ट्रपति", "प्रधानमंत्री"], a: 1 },
+  
+  //11
+  { q: "भारत का सर्वोच्च न्यायालय कहाँ स्थित है?", o: ["मुंबई", "कोलकाता", "नई दिल्ली", "चेन्नई"], a: 2 },
+  //12
+  { q: "न्यायिक पुनरावलोकन की शक्ति किसके पास है?", o: ["संसद", "कार्यपालिका", "न्यायपालिका", "राष्ट्रपति"], a: 2 },
+  //13
+  { q: "नीति निदेशक तत्व संविधान के किस भाग में हैं?", o: ["भाग–II", "भाग–III", "भाग–IV", "भाग–V"], a: 2 },
+  //14
+  { q: "नीति निदेशक तत्व किस देश से लिए गए हैं?", o: ["अमेरिका", "ब्रिटेन", "आयरलैंड", "रूस"], a: 2 },
+  //15
+  { q: "मौलिक कर्तव्य संविधान में किस संशोधन से जुड़े?", o: ["42वाँ", "44वाँ", "52वाँ", "73वाँ"], a: 0 },
+  
+  //16
+  { q: "भारत के राष्ट्रपति का चुनाव कौन करता है?", o: ["जनता", "संसद", "निर्वाचक मंडल", "सुप्रीम कोर्ट"], a: 2 },
+  //17
+  { q: "राष्ट्रपति का कार्यकाल कितने वर्ष का होता है?", o: ["4", "5", "6", "7"], a: 1 },
+  //18
+  { q: "भारत का वास्तविक कार्यकारी कौन होता है?", o: ["राष्ट्रपति", "प्रधानमंत्री", "मुख्य न्यायाधीश", "लोकसभा अध्यक्ष"], a: 1 },
+  //19
+  { q: "प्रधानमंत्री की नियुक्ति कौन करता है?", o: ["संसद", "राष्ट्रपति", "सुप्रीम कोर्ट", "राज्यपाल"], a: 1 },
+  //20
+  { q: "मंत्रिपरिषद सामूहिक रूप से किसके प्रति उत्तरदायी होती है?", o: ["राष्ट्रपति", "राज्यसभा", "लोकसभा", "सुप्रीम कोर्ट"], a: 2 },
+  
+  //21
+  { q: "लोकसभा के सदस्यों का कार्यकाल कितने वर्ष का होता है?", o: ["4", "5", "6", "7"], a: 1 },
+  //22
+  { q: "राज्यसभा स्थायी सदन क्यों कहलाती है?", o: ["कभी भंग नहीं होती", "लंबा कार्यकाल", "कम सदस्य", "सीमित शक्ति"], a: 0 },
+  //23
+  { q: "लोकसभा का अध्यक्ष कौन होता है?", o: ["प्रधानमंत्री", "स्पीकर", "राष्ट्रपति", "उपराष्ट्रपति"], a: 1 },
+  //24
+  { q: "उपराष्ट्रपति राज्यसभा का क्या होता है?", o: ["अध्यक्ष", "उपाध्यक्ष", "सदस्य", "नेता"], a: 0 },
+  //25
+  { q: "भारत में संघीय व्यवस्था का प्रमुख लक्षण क्या है?", o: ["एकात्मक शासन", "शक्ति का विभाजन", "तानाशाही", "राजतंत्र"], a: 1 },
+  
+  //26
+  { q: "भारत को किस प्रकार का राज्य कहा गया है?", o: ["संघीय", "एकात्मक", "संघीय सह एकात्मक", "राजतांत्रिक"], a: 2 },
+  //27
+  { q: "संविधान की आठवीं अनुसूची किससे संबंधित है?", o: ["राज्य", "भाषाएँ", "न्यायपालिका", "चुनाव"], a: 1 },
+  //28
+  { q: "भारत में वर्तमान में कितनी अनुसूचित भाषाएँ हैं?", o: ["18", "20", "22", "24"], a: 2 },
+  //29
+  { q: "चुनाव आयोग एक ___ संस्था है?", o: ["कार्यपालिका", "विधायिका", "न्यायपालिका", "स्वतंत्र"], a: 3 },
+  //30
+  { q: "भारत के मुख्य चुनाव आयुक्त की नियुक्ति कौन करता है?", o: ["प्रधानमंत्री", "संसद", "राष्ट्रपति", "सुप्रीम कोर्ट"], a: 2 },
+  
+  //31
+  { q: "सार्वभौमिक वयस्क मताधिकार का अर्थ क्या है?", o: ["सबको वोट", "अमीर को वोट", "शिक्षित को वोट", "पुरुष को वोट"], a: 0 },
+  //32
+  { q: "मतदान की न्यूनतम आयु कितनी है?", o: ["18 वर्ष", "21 वर्ष", "25 वर्ष", "30 वर्ष"], a: 0 },
+  //33
+  { q: "राजनीतिक दलों का मुख्य उद्देश्य क्या होता है?", o: ["सत्ता प्राप्ति", "सेवा", "न्याय", "शिक्षा"], a: 0 },
+  //34
+  { q: "भारत में दलीय प्रणाली कैसी है?", o: ["एक दलीय", "दो दलीय", "बहु-दलीय", "निर्दलीय"], a: 2 },
+  //35
+  { q: "दबाव समूह किसके लिए कार्य करते हैं?", o: ["सरकार", "जनहित", "न्यायपालिका", "सेना"], a: 1 },
+  
+  //36
+  { q: "लोकतंत्र की सफलता किस पर निर्भर करती है?", o: ["नेता", "संविधान", "जागरूक नागरिक", "सेना"], a: 2 },
+  //37
+  { q: "संयुक्त राष्ट्र संघ की स्थापना कब हुई?", o: ["1942", "1945", "1950", "1952"], a: 1 },
+  //38
+  { q: "संयुक्त राष्ट्र संघ का मुख्यालय कहाँ है?", o: ["लंदन", "पेरिस", "न्यूयॉर्क", "जेनेवा"], a: 2 },
+  //39
+  { q: "संयुक्त राष्ट्र का मुख्य उद्देश्य क्या है?", o: ["युद्ध", "शांति", "व्यापार", "धर्म"], a: 1 },
+  //40
+  { q: "UN का महासचिव किसके द्वारा नियुक्त होता है?", o: ["सुरक्षा परिषद", "महासभा", "ICJ", "WHO"], a: 1 },
+  
+  //41
+  { q: "शीत युद्ध किन दो गुटों के बीच था?", o: ["भारत–पाक", "अमेरिका–सोवियत संघ", "चीन–जापान", "ब्रिटेन–फ्रांस"], a: 1 },
+  //42
+  { q: "गुटनिरपेक्ष आंदोलन का संबंध किससे है?", o: ["युद्ध", "शांति", "किसी गुट से न जुड़ना", "व्यापार"], a: 2 },
+  //43
+  { q: "गुटनिरपेक्ष आंदोलन के प्रमुख नेता कौन थे?", o: ["नेहरू", "पटेल", "गांधी", "अंबेडकर"], a: 0 },
+  //44
+  { q: "भारतीय विदेश नीति का आधार क्या है?", o: ["हिंसा", "गुटबंदी", "शांति सहअस्तित्व", "युद्ध"], a: 2 },
+  //45
+  { q: "पंचशील सिद्धांत किससे संबंधित है?", o: ["आंतरिक नीति", "विदेश नीति", "अर्थव्यवस्था", "चुनाव"], a: 1 },
+  
+  //46
+  { q: "लोकतंत्र में सत्ता का स्रोत कौन होता है?", o: ["सेना", "राजा", "जनता", "संविधान"], a: 2 },
+  //47
+  { q: "संविधान का संशोधन कौन करता है?", o: ["सुप्रीम कोर्ट", "राष्ट्रपति", "संसद", "राज्यसभा"], a: 2 },
+  //48
+  { q: "आपातकाल की घोषणा कौन करता है?", o: ["प्रधानमंत्री", "राष्ट्रपति", "सुप्रीम कोर्ट", "लोकसभा"], a: 1 },
+  //49
+  { q: "भारत में अब तक कितने राष्ट्रीय आपातकाल लगे हैं?", o: ["1", "2", "3", "4"], a: 2 },
+  //50
+  { q: "लोकतंत्र का सर्वोत्तम रूप क्या माना जाता है?", o: ["प्रत्यक्ष", "अप्रत्यक्ष", "संसदीय", "तानाशाही"], a: 1 }
+];
+
+console.log(questions.length); // ✅ 50 (पक्का)
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>

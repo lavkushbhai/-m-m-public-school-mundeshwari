@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M.M Public School Mundeshwari</title>
+<link rel="stylesheet" href="notification.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="app-bar">
+  <span class="school-name" data-i18n="school">
+    M.M Public School Mundeshwari
+  </span>
+  <span class="hf-icon" onclick="openHF()">❓</span>
+  <div class="notify-icon" onclick="openNotify()">
+  🔔
+  <span id="notifyCount" class="notify-count"></span>
+</div>
+  <button id="menuBtn" class="menu-btn">☰</button>
+</header>
+
+<div id="overlay"></div>
+
+<!-- RIGHT SIDE MENU -->
+<nav id="sideMenu" class="side-menu">
+
+  <div class="menu-header">
+    <h3 class="menu-school-name" data-i18n="school">
+      M.M Public School Mundeshwari
+    </h3>
+    <div class="menu-divider"></div>
+  </div>
+  <a href="#" id="officialLogin">Official Login</a>
+  <a href="#">Admission</a>
+  <a href="#">Result</a>
+  <a href="#">Notice</a>
+  <a href="#">About Us</a>
+  <a href="#">Contact Us</a>
+<a href="signup.html">Student Signup</a>  <!-- ===== 3 MENU TEXT OPTIONS ===== -->
+<div class="menu-item" onclick="openHelp()">❓ Samasya</div>
+<div class="menu-item" onclick="openHistory()">📜 History</div>
+  
+
+
+  <!-- SETTINGS -->
+  <div class="menu-section">
+    <button class="setting-btn" onclick="toggleSettings()">⚙️ Settings</button>
+
+    <div id="settingsBox" class="settings-box">
+
+      <!-- THEME -->
+      <button class="sub-btn" onclick="toggleThemeBox()">🎨 Theme</button>
+      <div id="themeBox" class="sub-box">
+        <button onclick="confirmTheme('light')">Original Theme</button>
+        <button onclick="confirmTheme('dark')">Dark Theme</button>
+        <button onclick="toggleColors()">Custom Color</button>
+
+        <div id="colorPalette" class="color-palette">
+          <span data-color="#1f3c88"></span>
+          <span data-color="#009688"></span>
+          <span data-color="#e91e63"></span>
+          <span data-color="#ff9800"></span>
+          <span data-color="#673ab7"></span>
+          <span data-color="#2196f3"></span>
+          <span data-color="#4caf50"></span>
+          <span data-color="#795548"></span>
+          <span data-color="#f44336"></span>
+          <span data-color="#3f51b5"></span>
+        </div>
+        <small>Extra colors coming soon</small>
+      </div>
+
+      <!-- LANGUAGE -->
+      <button class="sub-btn" onclick="toggleLangBox()">🌐 Language</button>
+      <div id="langBox" class="sub-box">
+        <button onclick="confirmLanguage('hi')">हिन्दी</button>
+        <button onclick="confirmLanguage('en')">English</button>
+
+        <!-- TEXT COLOR -->
+        <button class="sub-btn" onclick="toggleTextColor()">🅰️ Text Color</button>
+        <div id="textColorBox" class="sub-box">
+          <div class="text-color">
+            <span data-text="#000000"></span>
+            <span data-text="#1f3c88"></span>
+            <span data-text="#009688"></span>
+            <span data-text="#e91e63"></span>
+            <span data-text="#ff9800"></span>
+            <span data-text="#673ab7"></span>
+            <span data-text="#2196f3"></span>
+            <span data-text="#4caf50"></span>
+            <span data-text="#795548"></span>
+            <span data-text="#f44336"></span>
+          </div>
+          <small>Extra text colors coming soon</small>
+        </div>
+
+        <small>Extra languages coming soon</small>
+      </div>
+
+    </div>
+  </div>
+
+
+</nav>
+
+
+<main class="home">
+  <section class="hero">
+    <h1 data-i18n="hero">Education for a Better Future</h1>
+    <p data-i18n="hero_sub">Discipline • Knowledge • Values</p>
+    <button class="hero-admission-btn" data-i18n="admission">Admission</button>
+  </section>
+</main>
+<!-- ================= SMART FEATURES (COMPACT) ================= -->
+<section class="smart-section">
+  
+  <div class="smart-wrapper">
+    
+    <h2 class="smart-title">Smart Features</h2>
+    
+    <div class="smart-grid">
+      
+      <div class="smart-card">
+        <span class="smart-icon">🎥</span>
+        <span class="smart-text" data-i18n="videos">Videos</span>
+      </div>
+      
+      <div class="smart-card">
+        <span class="smart-icon">📄</span>
+        <span class="smart-text" data-i18n="pdf">PDF</span>
+      </div>
+      
+      <div class="smart-card">
+        <span class="smart-icon">📝</span>
+        <span class="smart-text" data-i18n="notes">Notes</span>
+      </div>
+      
+      <div class="smart-card">
+        <span class="smart-icon">🖼️</span>
+        <span class="smart-text" data-i18n="gallery">Gallery</span>
+      </div>
+      
+      <div class="smart-card">
+        <span class="smart-icon">📂</span>
+        <span class="smart-text" data-i18n="documents">Documents</span>
+      </div>
+      
+      <div class="smart-card" id="offlineCard">
+  <span class="smart-icon">🧪</span>
+  <span class="smart-text">Offline Test</span>
+</div>
+      
+      <div class="smart-card new-feature">
+        <span class="smart-icon">🧠</span>
+        <span class="smart-text" data-i18n="online_test">Online Test</span>
+        <span class="new-badge">NEW</span>
+      </div>
+      
+      <div class="smart-card new-feature">
+        <span class="smart-icon">🤖</span>
+        <span class="smart-text" data-i18n="ai">AI Learning</span>
+        <span class="new-badge">NEW</span>
+      </div>
+      
+<div class="smart-card new-feature" id="doubleChatCard">
+  <span class="smart-icon">💬💬</span>
+  <span class="smart-text" data-i18n="double_chat">Double Chat</span>
+  <span class="new-badge">NEW</span>
+</div>
+      
+    </div>
+    
+  </div>
+  
+</section>
+<!-- ================= FACILITIES (PRO + ANIMATED) ================= -->
+<section class="facility-section">
+  
+  <div class="facility-wrapper">
+    
+    <h2 class="facility-title" data-i18n="facility_title">
+      Our Facilities
+    </h2>
+    
+    <div class="facility-grid">
+      
+<div class="facility-card" onclick="openFacilityPopup('Science Laboratory')">
+  <span class="facility-icon">🔬</span>
+  <span data-i18n="facility1">Science Laboratory</span>
+</div>
+
+<div class="facility-card" onclick="openFacilityPopup('Library')">
+  <span class="facility-icon">📖</span>
+  <span data-i18n="facility2">Library</span>
+</div>
+
+<div class="facility-card" onclick="openFacilityPopup('Computer Lab')">
+  <span class="facility-icon">🖥️</span>
+  <span data-i18n="facility3">Computer Lab</span>
+</div>
+
+<div class="facility-card" onclick="openFacilityPopup('Sports Ground')">
+  <span class="facility-icon">⚽</span>
+  <span data-i18n="facility4">Sports Ground</span>
+</div>
+      
+<div class="facility-card" onclick="openTransportPopup()">
+  <span class="facility-icon">🚌</span>
+  <span data-i18n="facility5">Transport Facility</span>
+</div>
+      
+      <div class="facility-card" onclick="openMedicalPopup()">
+  <span class="facility-icon">🏥</span>
+  <span data-i18n="facility6">Medical Support</span>
+</div>
+      
+    </div>
+    
+  </div>
+  
+</section>
+<!-- ================= PRINCIPAL MESSAGE (IMPROVED) ================= -->
+<section class="principal-section">
+  
+  <div class="principal-wrapper">
+    
+    <h2 class="principal-title" data-i18n="principal_title">
+      Principal's Message
+    </h2>
+    
+    <div class="principal-card">
+      
+      <div class="principal-icon">
+  <span class="principal-emoji">👨‍🏫</span>
+</div>
+      <p class="principal-text" data-i18n="principal_msg">
+        Welcome to M.M Public School Mundeshwari.
+        Our mission is to provide quality education with discipline,
+        values and modern learning to shape a better future.
+      </p>
+      
+      <div class="principal-name" data-i18n="principal_name">
+        — Principal
+      </div>
+      
+    </div>
+    
+  </div>
+  
+</section>
+<!-- ================= ARRANGEMENTS (PRO + ANIMATED) ================= -->
+<section class="arrange-section">
+  
+  <div class="arrange-wrapper">
+    
+    <h2 class="arrange-title" data-i18n="arrange_title">
+      School Arrangements
+    </h2>
+    
+    <div class="arrange-grid">
+      
+      <div class="arrange-card">
+        <span class="arrange-icon">🪑</span>
+        <span data-i18n="arr1">Classroom Arrangement</span>
+      </div>
+      
+      <div class="arrange-card">
+        <span class="arrange-icon">📝</span>
+        <span data-i18n="arr2">Exam Arrangement</span>
+      </div>
+      
+      <div class="arrange-card">
+        <span class="arrange-icon">🧍‍♂️</span>
+        <span data-i18n="arr3">Seating Plan</span>
+      </div>
+      
+      <div class="arrange-card">
+        <span class="arrange-icon">🚌</span>
+        <span data-i18n="arr4">Transport Arrangement</span>
+      </div>
+      
+    </div>
+    
+  </div>
+  
+</section>
+<!-- ================= CONTACT HELP (ANIMATED + PRO) ================= -->
+<section class="contact-section">
+  
+  <div class="contact-wrapper">
+    
+    <h2 class="contact-title" data-i18n="contact_title">
+      Contact Help
+    </h2>
+    
+    <div class="contact-grid">
+      
+<!-- CALL -->
+<a href="tel:+919876543210" class="contact-card">
+  <span class="contact-icon">📞</span>
+  <span data-i18n="contact_call">Call Us</span>
+  <small>+91 80848 73902</small>
+</a>
+      
+<!-- WHATSAPP -->
+<a href="https://wa.me/918084873902"
+   class="contact-card"
+   target="_blank">
+  <span class="contact-icon">💬</span>
+  <span data-i18n="contact_whatsapp">WhatsApp</span>
+  <small>Chat Now</small>
+</a>
+      
+      <!-- EMAIL -->
+      <a href="mailto:mmpublicschool@gmail.com" class="contact-card">
+        <span class="contact-icon">📧</span>
+        <span data-i18n="contact_email">Email</span>
+        <small>mmpublicschool@gmail.com</small>
+      </a>
+      
+<!-- ADDRESS -->
+<div class="contact-card" onclick="openAddressPopup()">
+  <span class="contact-icon">📍</span>
+  <span data-i18n="contact_address">School Address</span>
+  <small data-i18n="contact_add_text">
+    Mundeshwari, Bihar
+  </small>
+</div>
+
+<!-- ADDRESS POPUP (ISOLATED) -->
+<div id="addressPopup" class="address-popup-overlay">
+  <div class="address-popup-box">
+    
+    <h3>🏫 School Address</h3>
+    
+    <p>
+      M.M Public School Mundeshwari <br>
+      Near Mundeshwari Temple <br>
+      Bhabua Road, Kaimur <br>
+      Bihar – 821102
+    </p>
+    
+    <button class="address-close-btn" onclick="closeAddressPopup()">
+      ✖ Close
+    </button>
+    
+  </div>
+</div>
+      
+    </div>
+    
+  </div>
+  
+</section>
+<!-- ================= COPYRIGHT SECTION ================= -->
+<section class="copyright-section">
+  
+  <div class="copyright-card">
+    
+    <div class="copyright-line"></div>
+    
+<p class="copyright-text">
+  © <span id="year"></span>
+  <span data-i18n="school">M.M Public School Mundeshwari</span>.
+  <span data-i18n="footer_copy">All Rights Reserved.</span>
+</p>
+    
+    <p class="designer-text">
+      Designed with ❤️ by
+      <span class="designer-name">M.M Public School PKSSS Team</span>
+    </p>
+    
+  </div>
+  
+</section>
+<!-- ================= BOTTOM NAV (PRO + CLICKABLE) ================= -->
+<footer class="app-footer">
+  
+  <nav class="bottom-nav">
+    
+    <button class="nav-item active" data-target="home">
+      <span class="nav-icon">🏠</span>
+      <small>Home</small>
+    </button>
+    
+    <button class="nav-item" data-target="academics">
+      <span class="nav-icon">🎓</span>
+      <small>Academics</small>
+    </button>
+    
+    <button class="nav-item" data-target="notice">
+      <span class="nav-icon">📰</span>
+      <small>Notice</small>
+    </button>
+    
+    <button class="nav-item" data-target="contact">
+      <span class="nav-icon">☎️</span>
+      <small>Contact</small>
+    </button>
+    
+  </nav>
+  
+</footer>
+
+<!-- CONFIRM MODAL -->
+<div id="confirmModal" class="confirm-modal">
+  <div class="confirm-box">
+    <h3>Confirm Change</h3>
+    <p>Do you want to save this change?</p>
+    <div class="confirm-actions">
+      <button id="cancelChange">Cancel</button>
+      <button id="saveChange">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LOADING POPUP ===== -->
+<div id="loadingPopup" class="popup-overlay">
+  <div class="popup-box">
+    <div class="loader"></div>
+    <p>Loading, please wait...</p>
+  </div>
+</div>
+
+<!-- ===== SAMASYA POPUP ===== -->
+<div id="helpPopup" class="popup-overlay">
+  <div class="popup-box">
+    
+    <div id="helpList">
+      <h3>आपको किस में समस्या है?</h3>
+      
+      <div class="option" onclick="openSolution('Admission')">Admission</div>
+      <div class="option" onclick="openSolution('Notice')">Notice</div>
+      <div class="option" onclick="openSolution('Result')">Result</div>
+      <div class="option" onclick="openSolution('Contact')">Contact</div>
+      
+      <div class="back-text" onclick="closeHelp()">⬅ Back</div>
+    </div>
+    
+    <div id="helpSolution">
+      <h3 id="solTitle"></h3>
+      <p id="solText"></p>
+      
+      <div class="option voice" onclick="speakSolution()">🔊 Voice</div>
+      <div class="back-text" onclick="goBack()">⬅ Back</div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- ===== HISTORY POPUP ===== -->
+<div id="historyPopup" class="popup-overlay">
+  <div class="popup-box history-box">
+    
+    <h3 class="history-title">📜 History</h3>
+    
+    <div id="historyList" class="history-list"></div>
+    
+    <div class="history-actions">
+      <div class="history-clear" onclick="confirmClear()">
+        🗑 Clear
+      </div>
+      <div class="history-back" onclick="closeHistory()">
+        ⬅ Back
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- ===== CONFIRM CLEAR POPUP ===== -->
+<div id="confirmPopup" class="popup-overlay">
+  <div class="popup-box">
+    <h3>Confirm</h3>
+    <p>क्या आप वाकई history delete करना चाहते हैं?</p>
+    
+    <div class="option danger" onclick="clearHistory()">Yes, Delete</div>
+    <div class="back-text" onclick="closeConfirm()">Cancel</div>
+  </div>
+</div>
+<div id="notifyPopup" class="notify-overlay">
+  <div class="notify-box">
+    
+    <div class="notify-header">
+      <div class="notify-title">Notifications</div>
+      <div class="notify-close" onclick="closeNotify()">✖</div>
+    </div>
+    
+    <div id="importantBox" class="important-wrap"></div>
+    <div id="notifyList" class="notify-list"></div>
+    
+  </div>
+</div>
+<!-- ===== HELP / FEEDBACK MENU ===== -->
+<div class="hf-overlay" id="hfOverlay" onclick="closeHF(event)">
+  <div class="hf-box">
+    
+    <button class="hf-btn" onclick="goHelp()">
+      ❓ Help
+    </button>
+    
+    <button class="hf-btn" onclick="goFeedback()">
+      📝 Feedback
+    </button>
+    
+    <div class="hf-soon">
+      🚀 Extra Features<br>
+      <small>Coming Soon</small>
+    </div>
+    
+  </div>
+</div>
+<!-- ===== MEDICAL SUPPORT POPUP ===== -->
+<div id="medicalPopup" class="simple-popup">
+  
+  <div class="simple-popup-box">
+    
+    <h3>🏥 Medical Support</h3>
+    
+    <p class="coming-text">
+      🚧 This feature is <b>Coming Soon</b><br>
+      सभी medical सुविधाएँ जल्द ही उपलब्ध होंगी।
+    </p>
+    
+    <button class="close-popup-btn" onclick="closeMedicalPopup()">
+      Close
+    </button>
+    
+  </div>
+  
+</div>
+<!-- ===== TRANSPORT FACILITY POPUP ===== -->
+<div id="transportPopup" class="simple-popup">
+  
+  <div class="simple-popup-box">
+    
+    <h3>🚌 Transport Facility</h3>
+    
+    <p class="coming-text">
+      🚧 This feature is <b>Coming Soon</b><br>
+      स्कूल की transport सुविधा जल्द ही उपलब्ध होगी।
+    </p>
+    
+    <button class="close-popup-btn" onclick="closeTransportPopup()">
+      Close
+    </button>
+    
+  </div>
+  
+</div>
+<!-- ===== FACILITY COMMON POPUP ===== -->
+<div id="facilityPopup" class="simple-popup">
+  
+  <div class="simple-popup-box">
+    
+    <h3 id="facilityTitle">Facility</h3>
+    
+    <p class="coming-text">
+      🚧 यह सुविधा <b>Coming Soon</b> है<br>
+      बहुत जल्द उपलब्ध होगी।
+    </p>
+    
+    <button class="close-popup-btn" onclick="closeFacilityPopup()">
+      Close
+    </button>
+    
+  </div>
+  
+</div>
+<!-- SIGNUP POPUP -->
+<div id="signupOverlay" style="display:none">
+  <div class="signup-box">
+    
+    <!-- STEP 1 -->
+    <div class="step active" id="step1">
+      <h3>Student Name</h3>
+      <input id="studentName" placeholder="Student name">
+      <button onclick="nextStep(1)">Next</button>
+    </div>
+    
+    <!-- STEP 2 -->
+    <div class="step" id="step2">
+      <input id="username" placeholder="Username">
+      <input id="confirmUsername" placeholder="Confirm Username">
+      <input id="password" type="password" placeholder="Password">
+      <input id="confirmPassword" type="password" placeholder="Confirm Password">
+      
+      <label>
+        <input type="checkbox" id="matchCheck" disabled>
+        Username & Password match
+      </label>
+      
+      <button onclick="nextStep(2)">Next</button>
+    </div>
+    
+    <!-- STEP 3 -->
+    <div class="step" id="step3">
+      <p>Name: <b id="pName"></b></p>
+      <p>Username: <b id="pUser"></b></p>
+      <button onclick="complete()">Confirm</button>
+    </div>
+    
+    <!-- SUCCESS -->
+    <div class="step" id="step4">
+      <h3>Signup Success</h3>
+      <p>School ID</p>
+      <h2 id="schoolId"></h2>
+      <button onclick="copyId()">Copy</button>
+    </div>
+    
+  </div>
+</div>
+
+<script type="module" src="notification.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

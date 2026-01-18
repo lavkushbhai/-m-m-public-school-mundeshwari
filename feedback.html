@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback System</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ===== GLOBAL STYLES ===== */
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --secondary: #8b5cf6;
+  --accent: #06b6d4;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --light: #f8fafc;
+  --dark: #1e293b;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-600: #475569;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+  min-height: 100vh;
+  padding: 16px;
+  color: var(--dark);
+  line-height: 1.5;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Container */
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.app-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.app-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 4px;
+}
+
+.app-subtitle {
+  color: var(--gray-600);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+  display: flex;
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 6px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 14px 12px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+}
+
+.tab.active {
+  color: white;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  box-shadow: var(--shadow-sm);
+}
+
+.tab .icon {
+  font-size: 1rem;
+}
+
+.tab:not(.active):hover {
+  background: var(--gray-100);
+}
+
+/* Card */
+.card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--gray-200);
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--dark);
+  font-size: 0.9rem;
+}
+
+.form-label i {
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: var(--transition);
+  background: white;
+  color: var(--dark);
+  outline: none;
+}
+
+.form-input:focus, .form-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.form-textarea {
+  height: 120px;
+  resize: none;
+  line-height: 1.5;
+}
+
+/* Star Rating */
+.rating-container {
+  margin-bottom: 24px;
+}
+
+.rating-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: var(--dark);
+  font-size: 0.9rem;
+}
+
+.rating-label i {
+  color: #fbbf24;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  padding: 10px;
+  background: var(--gray-100);
+  border-radius: var(--radius-md);
+}
+
+.star {
+  font-size: 2.2rem;
+  color: var(--gray-300);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.star:hover {
+  transform: scale(1.1);
+  color: #fbbf24;
+}
+
+.star.active {
+  color: #fbbf24;
+}
+
+.star-value {
+  text-align: center;
+  margin-top: 8px;
+  font-weight: 600;
+  color: var(--gray-600);
+  font-size: 0.85rem;
+}
+
+/* File Upload */
+.file-upload {
+  margin-bottom: 24px;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--dark);
+  font-size: 0.9rem;
+}
+
+.file-label i {
+  color: var(--accent);
+}
+
+.file-input-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.file-input-wrapper input[type="file"] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.file-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px;
+  background: var(--gray-100);
+  border: 2px dashed var(--gray-300);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  color: var(--gray-600);
+  transition: var(--transition);
+}
+
+.file-custom:hover {
+  border-color: var(--primary);
+  background: var(--gray-200);
+}
+
+.file-custom i {
+  font-size: 1.4rem;
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: var(--shadow-md);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.submit-btn i {
+  font-size: 1.1rem;
+}
+
+/* Success Message */
+.success-message {
+  margin-top: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  border: 2px solid var(--success);
+  border-radius: var(--radius-md);
+  color: #065f46;
+  font-weight: 600;
+  text-align: center;
+  display: none;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.success-message i {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+/* COMPACT FEEDBACK LIST */
+.feedback-list {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.feedback-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.feedback-list::-webkit-scrollbar-track {
+  background: var(--gray-100);
+  border-radius: 10px;
+}
+
+.feedback-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 10px;
+}
+
+/* COMPACT FEEDBACK CARD */
+.feedback-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  transition: var(--transition);
+  position: relative;
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.feedback-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--gray-300);
+  transition: var(--transition);
+}
+
+.feedback-card.replied::before {
+  background: linear-gradient(135deg, var(--success), #34d399);
+}
+
+.feedback-card.replied {
+  border-left-color: var(--success);
+}
+
+.feedback-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Compact Feedback Header */
+.feedback-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.user-info-compact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar-compact {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.user-details-compact {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name-compact {
+  font-weight: 700;
+  color: var(--dark);
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.user-contact-compact {
+  font-size: 0.75rem;
+  color: var(--gray-600);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.feedback-time-compact {
+  font-size: 0.75rem;
+  color: var(--gray-600);
+  white-space: nowrap;
+}
+
+/* Compact Message */
+.feedback-message-compact {
+  background: var(--gray-100);
+  padding: 14px;
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  line-height: 1.5;
+  color: var(--dark);
+  border-left: 3px solid var(--primary);
+  font-size: 0.9rem;
+  max-height: 80px;
+  overflow: hidden;
+  position: relative;
+}
+
+.feedback-message-compact.expanded {
+  max-height: none;
+}
+
+.read-more-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent, var(--gray-100) 50%);
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: var(--primary);
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+}
+
+/* Compact Rating */
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: #92400e;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.rating-badge i {
+  color: #fbbf24;
+  font-size: 0.9rem;
+}
+
+/* Image Preview (Compact) */
+.image-preview-compact {
+  margin-top: 10px;
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  width: 100%;
+  max-height: 120px;
+}
+
+.image-preview-compact img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.image-preview-compact:hover img {
+  transform: scale(1.02);
+}
+
+/* Admin Reply (Compact) */
+.admin-reply-section-compact {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.admin-reply-label-compact {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: var(--success);
+  font-size: 0.85rem;
+}
+
+.admin-reply-label-compact i {
+  font-size: 0.9rem;
+}
+
+.admin-reply-content-compact {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--success);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  position: relative;
+}
+
+.admin-reply-content-compact::before {
+  content: 'ADMIN';
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: var(--success);
+  letter-spacing: 0.5px;
+  opacity: 0.5;
+}
+
+.reply-time-compact {
+  font-size: 0.7rem;
+  color: var(--gray-600);
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--gray-600);
+}
+
+.empty-state i {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  color: var(--primary);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  color: var(--dark);
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.empty-state p {
+  max-width: 250px;
+  margin: 0 auto;
+  font-size: 0.9rem;
+}
+
+/* Hide Utility */
+.hide {
+  display: none !important;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--gray-200);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  body {
+    padding: 12px;
+  }
+  
+  .container {
+    max-width: 100%;
+  }
+  
+  .card {
+    padding: 20px 16px;
+  }
+  
+  .tab {
+    padding: 12px 8px;
+    font-size: 0.85rem;
+  }
+  
+  .form-input, .form-textarea {
+    padding: 14px;
+  }
+  
+  .submit-btn {
+    padding: 16px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <!-- App Header -->
+  <header class="app-header">
+    <h1 class="app-title">Feedback System</h1>
+    <p class="app-subtitle">Share your feedback • Get response</p>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs">
+    <div class="tab active" id="tabSend" onclick="showSend()">
+      <span class="icon"><i class="fas fa-paper-plane"></i></span>
+      <span class="text">Send</span>
+    </div>
+    <div class="tab" id="tabReply" onclick="showReply()">
+      <span class="icon"><i class="fas fa-comments"></i></span>
+      <span class="text">View</span>
+    </div>
+  </nav>
+
+  <!-- Send Feedback Card -->
+  <div class="card" id="sendCard">
+    <div class="form-group">
+      <label class="form-label">
+        <i class="fas fa-user"></i>
+        <span>Name (Optional)</span>
+      </label>
+      <input type="text" class="form-input" id="name" placeholder="Your name">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">
+        <i class="fas fa-phone"></i>
+        <span>Mobile (Optional)</span>
+      </label>
+      <input type="tel" class="form-input" id="mobile" placeholder="Mobile number">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">
+        <i class="fas fa-comment-dots"></i>
+        <span>Your Feedback</span>
+      </label>
+      <textarea class="form-textarea" id="message" placeholder="Write your feedback here..."></textarea>
+    </div>
+
+    <!-- Star Rating -->
+    <div class="rating-container">
+      <label class="rating-label">
+        <i class="fas fa-star"></i>
+        <span>Rating</span>
+      </label>
+      <div class="rating-stars" id="stars">
+        <span class="star" onclick="setStar(1)">★</span>
+        <span class="star" onclick="setStar(2)">★</span>
+        <span class="star" onclick="setStar(3)">★</span>
+        <span class="star" onclick="setStar(4)">★</span>
+        <span class="star" onclick="setStar(5)">★</span>
+      </div>
+      <div class="star-value" id="starValue">Select rating</div>
+    </div>
+
+    <!-- Image Upload -->
+    <div class="file-upload">
+      <label class="file-label">
+        <i class="fas fa-image"></i>
+        <span>Image (Optional)</span>
+      </label>
+      <div class="file-input-wrapper">
+        <input type="file" id="image" accept="image/*">
+        <div class="file-custom">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <span>Choose image</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button class="submit-btn" id="submitBtn" onclick="sendFeedback()">
+      <i class="fas fa-paper-plane"></i>
+      <span>Submit Feedback</span>
+    </button>
+
+    <!-- Success Message -->
+    <div class="success-message" id="successMessage">
+      <i class="fas fa-check-circle"></i>
+      <div>Feedback submitted successfully!</div>
+    </div>
+  </div>
+
+  <!-- View Feedback Card -->
+  <div class="card hide" id="replyCard">
+    <div class="feedback-list" id="feedbackList">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading feedback...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAHAQjn4sTuR9FiGF3ljRrFEMZQjsx-SHg",
+    authDomain: "apni-duniya-b53d7.firebaseapp.com",
+    databaseURL: "https://apni-duniya-b53d7-default-rtdb.firebaseio.com",
+    projectId: "apni-duniya-b53d7",
+    storageBucket: "apni-duniya-b53d7.firebasestorage.app",
+    messagingSenderId: "178853058918",
+    appId: "1:178853058918:web:91dfaa5c5e41446da290a7",
+    measurementId: "G-SW5SH1V2BB"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getDatabase(app);
+
+  window.db = db;
+  window.ref = ref;
+  window.push = push;
+  window.onValue = onValue;
+</script>
+
+<!-- Main Application Code -->
+<script>
+let rating = 0;
+
+// Tab switching
+window.showSend = () => {
+  document.getElementById('sendCard').classList.remove("hide");
+  document.getElementById('replyCard').classList.add("hide");
+  document.getElementById('tabSend').classList.add("active");
+  document.getElementById('tabReply').classList.remove("active");
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.showReply = () => {
+  document.getElementById('sendCard').classList.add("hide");
+  document.getElementById('replyCard').classList.remove("hide");
+  document.getElementById('tabReply').classList.add("active");
+  document.getElementById('tabSend').classList.remove("active");
+  loadFeedback();
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// Star rating
+window.setStar = (n) => {
+  rating = n;
+  const stars = document.querySelectorAll('.star');
+  const starValue = document.getElementById('starValue');
+  
+  stars.forEach((star, index) => {
+    star.classList.toggle('active', index < n);
+  });
+  
+  const ratings = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+  starValue.textContent = `${ratings[n-1]} (${n}/5)`;
+  starValue.style.color = getRatingColor(n);
+};
+
+function getRatingColor(rating) {
+  const colors = ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#10b981'];
+  return colors[rating - 1] || '#6b7280';
+}
+
+// Send feedback
+window.sendFeedback = async () => {
+  const message = document.getElementById('message').value.trim();
+  if (!message) {
+    alert("Please enter your feedback message");
+    return;
+  }
+
+  const submitBtn = document.getElementById('submitBtn');
+  const originalHTML = submitBtn.innerHTML;
+  
+  submitBtn.innerHTML = `
+    <i class="fas fa-spinner fa-spin"></i>
+    <span>Submitting...</span>
+  `;
+  submitBtn.disabled = true;
+
+  const name = document.getElementById('name').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const imageFile = document.getElementById('image').files[0];
+  
+  try {
+    let imageData = null;
+    
+    if (imageFile) {
+      if (imageFile.size > 5 * 1024 * 1024) {
+        alert("Image size should be less than 5MB");
+        throw new Error("Image too large");
+      }
+      
+      imageData = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(imageFile);
+      });
+    }
+
+    const now = new Date();
+    const timeString = now.toLocaleString('hi-IN', {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    const feedbackRef = ref(db, "feedbacks");
+    await push(feedbackRef, {
+      name: name || "Anonymous",
+      mobile: mobile || "Not provided",
+      message: message,
+      rating: rating || 0,
+      image: imageData || "",
+      adminReply: "",
+      replyTime: "",
+      submittedTime: timeString,
+      timestamp: now.getTime()
+    });
+
+    const successMessage = document.getElementById('successMessage');
+    successMessage.style.display = 'block';
+    
+    setTimeout(() => {
+      document.getElementById('name').value = "";
+      document.getElementById('mobile').value = "";
+      document.getElementById('message').value = "";
+      document.getElementById('image').value = "";
+      rating = 0;
+      
+      const stars = document.querySelectorAll('.star');
+      stars.forEach(star => star.classList.remove('active'));
+      document.getElementById('starValue').textContent = "Select rating";
+      
+      submitBtn.innerHTML = originalHTML;
+      submitBtn.disabled = false;
+    }, 500);
+
+    setTimeout(() => {
+      successMessage.style.display = 'none';
+    }, 3000);
+
+    setTimeout(() => {
+      showReply();
+    }, 1500);
+    
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Error submitting feedback. Please try again.");
+    submitBtn.innerHTML = originalHTML;
+    submitBtn.disabled = false;
+  }
+};
+
+// Load feedback
+function loadFeedback() {
+  const feedbackList = document.getElementById('feedbackList');
+  const feedbackRef = ref(db, "feedbacks");
+  
+  feedbackList.innerHTML = `
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <p>Loading feedback...</p>
+    </div>
+  `;
+  
+  onValue(feedbackRef, (snap) => {
+    if (!snap.exists()) {
+      feedbackList.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-comment-slash"></i>
+          <h3>No Feedback Yet</h3>
+          <p>Be the first to share your feedback!</p>
+        </div>
+      `;
+      return;
+    }
+
+    const feedbacks = [];
+    
+    snap.forEach(child => {
+      const data = child.val();
+      data.id = child.key;
+      feedbacks.push(data);
+    });
+    
+    feedbacks.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    
+    let html = '';
+    
+    feedbacks.forEach((feedback, index) => {
+      const hasReply = feedback.adminReply && feedback.adminReply.trim() !== "";
+      const userName = feedback.name || "Anonymous";
+      const userInitial = userName.charAt(0).toUpperCase();
+      const mobile = feedback.mobile || "Not provided";
+      const ratingValue = feedback.rating || 0;
+      const submittedTime = feedback.submittedTime || "Recently";
+      const replyTime = feedback.replyTime || "";
+      
+      // Truncate long messages
+      const message = feedback.message || "No message";
+      const isLongMessage = message.length > 120;
+      const displayMessage = isLongMessage ? message.substring(0, 120) + "..." : message;
+      
+      html += `
+        <div class="feedback-card ${hasReply ? 'replied' : ''}" 
+             style="animation-delay: ${index * 0.05}s;">
+          
+          <!-- Compact Header -->
+          <div class="feedback-header">
+            <div class="user-info-compact">
+              <div class="user-avatar-compact">${userInitial}</div>
+              <div class="user-details-compact">
+                <div class="user-name-compact">${userName}</div>
+                <div class="user-contact-compact">
+                  <i class="fas fa-phone"></i>
+                  <span>${mobile}</span>
+                </div>
+              </div>
+            </div>
+            <div class="feedback-time-compact">
+              <i class="far fa-clock"></i>
+              <span>${submittedTime}</span>
+            </div>
+          </div>
+          
+          <!-- Message -->
+          <div class="feedback-message-compact" id="message-${feedback.id}">
+            ${displayMessage.replace(/\n/g, '<br>')}
+            ${isLongMessage ? `
+              <button class="read-more-btn" onclick="toggleMessage('${feedback.id}', '${message.replace(/'/g, "\\'")}')">
+                Read more
+              </button>
+            ` : ''}
+          </div>
+          
+          <!-- Rating -->
+          ${ratingValue > 0 ? `
+            <div class="rating-badge">
+              <i class="fas fa-star"></i>
+              <span>${ratingValue}/5</span>
+            </div>
+          ` : ''}
+          
+          <!-- Image -->
+          ${feedback.image ? `
+            <div class="image-preview-compact" onclick="viewImage('${feedback.image}', '${userName}')">
+              <img src="${feedback.image}" alt="Image">
+            </div>
+          ` : ''}
+          
+          <!-- Admin Reply -->
+          <div class="admin-reply-section-compact">
+            <div class="admin-reply-label-compact">
+              <i class="fas fa-reply"></i>
+              <span>Admin Response</span>
+            </div>
+            <div class="admin-reply-content-compact">
+              ${hasReply ? 
+                feedback.adminReply.replace(/\n/g, '<br>') : 
+                '<em>Waiting for admin response</em>'
+              }
+              ${replyTime ? `
+                <div class="reply-time-compact">
+                  <i class="far fa-clock"></i>
+                  <span>Replied: ${replyTime}</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+          
+        </div>
+      `;
+    });
+    
+    feedbackList.innerHTML = html;
+    
+    setTimeout(() => {
+      const cards = document.querySelectorAll('.feedback-card');
+      cards.forEach(card => {
+        card.style.opacity = '1';
+      });
+    }, 100);
+    
+  }, (error) => {
+    console.error("Error loading feedback:", error);
+    feedbackList.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Connection Error</h3>
+        <p>Please check your internet connection</p>
+      </div>
+    `;
+  });
+}
+
+// Toggle message expand/collapse
+window.toggleMessage = (id, fullMessage) => {
+  const messageElement = document.getElementById(`message-${id}`);
+  const button = messageElement.querySelector('.read-more-btn');
+  
+  if (messageElement.classList.contains('expanded')) {
+    // Collapse
+    const shortMessage = fullMessage.substring(0, 120) + "...";
+    messageElement.innerHTML = shortMessage.replace(/\n/g, '<br>') + 
+      `<button class="read-more-btn" onclick="toggleMessage('${id}', '${fullMessage.replace(/'/g, "\\'")}')">
+        Read more
+      </button>`;
+    messageElement.classList.remove('expanded');
+  } else {
+    // Expand
+    messageElement.innerHTML = fullMessage.replace(/\n/g, '<br>') + 
+      `<button class="read-more-btn" onclick="toggleMessage('${id}', '${fullMessage.replace(/'/g, "\\'")}')">
+        Show less
+      </button>`;
+    messageElement.classList.add('expanded');
+  }
+};
+
+// View image
+window.viewImage = (imageSrc, userName) => {
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+  `;
+  
+  modal.innerHTML = `
+    <div style="position: relative; max-width: 90%; max-height: 90%;">
+      <img src="${imageSrc}" alt="Image from ${userName}" 
+           style="max-width: 100%; max-height: 90vh; border-radius: 8px;">
+      <button onclick="this.parentElement.parentElement.remove()" 
+              style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); 
+                     border: none; color: white; width: 36px; height: 36px; border-radius: 50%; 
+                     font-size: 20px; cursor: pointer; display: flex; align-items: center; 
+                     justify-content: center; backdrop-filter: blur(10px);">
+        ×
+      </button>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.remove();
+    }
+  });
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  showSend();
+});
+</script>
+</body>
+</html>

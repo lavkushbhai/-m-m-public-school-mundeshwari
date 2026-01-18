@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Login</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;font-family:system-ui}
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(135deg,#1e3c72,#2a5298);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* LOGIN BOX */
+.login-box{
+  background:#fff;
+  width:90%;
+  max-width:380px;
+  padding:28px;
+  border-radius:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+}
+
+.login-box h2{
+  text-align:center;
+  color:#1e3c72;
+  margin-bottom:20px;
+}
+
+.input-group{
+  margin-bottom:16px;
+}
+
+.input-group label{
+  display:block;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.input-group input{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #ccc;
+  font-size:15px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:16px;
+  background:#1e3c72;
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(0,0,0,.3);
+}
+button:hover{background:#4a6fff}
+
+/* NOTE */
+.note{
+  margin-top:16px;
+  padding:12px;
+  background:#f5f7ff;
+  border-radius:14px;
+  font-size:13px;
+  color:#333;
+  line-height:1.5;
+}
+
+/* ALERT MODAL */
+#alertBox{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.alert-content{
+  background:#fff;
+  padding:22px;
+  border-radius:20px;
+  width:90%;
+  max-width:320px;
+  text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+  animation:pop .3s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(.8);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+.alert-content h3{
+  color:#1e3c72;
+  margin-bottom:10px;
+}
+
+.alert-content p{
+  font-size:14px;
+  color:#444;
+  margin-bottom:18px;
+}
+
+.alert-content button{
+  background:#1e3c72;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+  <h2>🎓 Student Login</h2>
+
+  <div class="input-group">
+    <label>Username</label>
+    <input id="username" type="text" placeholder="Enter username">
+  </div>
+
+  <div class="input-group">
+    <label>Password</label>
+    <input id="password" type="password" placeholder="Enter password">
+  </div>
+
+  <div class="input-group">
+    <label>School ID</label>
+    <input id="schoolId" type="text" placeholder="MMPSM-2026-01">
+  </div>
+
+  <button onclick="login()">Login</button>
+
+  <div class="note">
+    🔹 <b>नोट:</b> Login होने में थोड़ा समय लग सकता है, कृपया प्रतीक्षा करें।<br>
+    🔹 <b>Note:</b> Login may take a few seconds, please wait patiently.<br><br>
+    ✔️ Signup के समय दिया गया सही Username, Password और School ID ही प्रयोग करें।
+  </div>
+</div>
+
+<!-- ALERT POPUP -->
+<div id="alertBox">
+  <div class="alert-content">
+    <h3 id="alertTitle">Alert</h3>
+    <p id="alertMsg"></p>
+    <button onclick="closeAlert()">OK</button>
+  </div>
+</div>
+
+<!-- FIREBASE LOGIN SCRIPT -->
+<script type="module">
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getDatabase, ref, get } from
+"https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyCy1r8BXbe-W9UBsCrFDFgkHy-j7lYFwYg",
+  databaseURL:
+  "https://mmpublicschoolmundeshwar-233a4-default-rtdb.firebaseio.com"
+});
+
+const db = getDatabase(app);
+
+/* CUSTOM ALERT */
+function showAlert(title,msg){
+  alertTitle.innerText = title;
+  alertMsg.innerText = msg;
+  alertBox.style.display="flex";
+}
+function closeAlert(){
+  alertBox.style.display="none";
+}
+
+async function login(){
+  const u = username.value.trim();
+  const p = password.value.trim();
+  const id = schoolId.value.trim();
+
+  if(!u || !p || !id){
+    showAlert("Input Required",
+      "कृपया सभी फ़ील्ड भरें। / Please fill all fields.");
+    return;
+  }
+
+  const snap = await get(ref(db,"students/"+id));
+
+  if(!snap.exists()){
+    showAlert("Invalid School ID",
+      "दिया गया School ID सही नहीं है।");
+    return;
+  }
+
+  const data = snap.val();
+
+  if(data.username !== u || data.password !== p){
+    showAlert("Login Failed",
+      "Username या Password गलत है।");
+    return;
+  }
+
+  localStorage.setItem("chatUser", JSON.stringify({
+    schoolId:id,
+    name:data.name
+  }));
+
+  showAlert("Login Successful",
+    "आप सफलतापूर्वक Login हो गए हैं।");
+
+  setTimeout(()=>{
+    window.location.href="double-chat.html";
+  },1200);
+}
+
+/* ⭐ important */
+window.login = login;
+window.closeAlert = closeAlert;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School Admin Panel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:#f4f7fb;
+  height:100vh;
+  overflow:hidden;
+  color:#333;
+}
+
+/* TOP HEADER */
+.header{
+  height:60px;
+  background:#1e88e5;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header h1{
+  font-size:18px;
+  font-weight:600;
+}
+
+/* LAYOUT */
+.layout{
+  display:flex;
+  height:calc(100vh - 60px);
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:260px;
+  background:#ffffff;
+  padding:20px 14px;
+  box-shadow:4px 0 25px rgba(0,0,0,.15);
+}
+.sidebar h3{
+  text-align:center;
+  margin-bottom:22px;
+  color:#1e88e5;
+  font-weight:600;
+}
+
+/* MENU TEXT */
+.menu a{
+  display:block;
+  padding:14px 16px;
+  margin-bottom:12px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:500;
+  color:#333;
+  background:#f5f8fc;
+  box-shadow:0 6px 14px rgba(0,0,0,.12);
+  transition:.25s;
+}
+.menu a:hover{
+  background:#e3f2fd;
+  transform:translateX(4px);
+}
+.menu a.active{
+  background:#1e88e5;
+  color:#fff;
+}
+.menu a.logout{
+  background:#e53935;
+  color:#fff;
+}
+
+/* MAIN */
+.main{
+  flex:1;
+  padding:24px;
+  overflow-y:auto;
+}
+
+/* CONTENT BOX */
+.box{
+  background:#ffffff;
+  padding:22px;
+  border-radius:20px;
+  margin-bottom:20px;
+  box-shadow:0 18px 40px rgba(0,0,0,.15);
+}
+.box h2{
+  font-size:18px;
+  color:#1e88e5;
+  margin-bottom:10px;
+}
+.box p{
+  font-size:14px;
+  color:#555;
+  line-height:1.6;
+}
+
+/* INFO GRID */
+.info{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:18px;
+}
+.info div{
+  background:#f9fbff;
+  padding:18px;
+  border-radius:16px;
+  box-shadow:0 10px 25px rgba(0,0,0,.12);
+}
+.info h4{
+  color:#1e88e5;
+  margin-bottom:6px;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{width:100px;padding:12px}
+  .sidebar h3{display:none}
+  .menu a{
+    font-size:11px;
+    text-align:center;
+    padding:12px 6px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN CHECK -->
+<script>
+if(localStorage.getItem("adminLogin")!=="yes"){
+  location.href="../login.html";
+}
+</script>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>M.M Public School – Admin Panel</h1>
+  <span>Dashboard</span>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h3>ADMIN MENU</h3>
+  <div class="menu">
+    <a href="admin-dashboard.html" class="active">Dashboard</a>
+    <a href="admin.html">Notification Upload</a>
+    <a href="admission.html"> admission Check</a>
+    <a href="students.html">Students</a>
+    <a href="teachers.html">Teachers</a>
+    <a href="results.html">Results</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="admin-feedback.html">feedback</a>
+    <a href="admin-signup.html">Signup login history</a>
+
+    <a href="#" class="logout" onclick="logout()">Logout</a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="box">
+    <h2>Welcome Admin</h2>
+    <p>
+      This admin panel allows you to manage all school activities
+      such as notifications, admissions, students, teachers and results
+      in a secure and professional way.
+    </p>
+  </div>
+
+  <div class="box">
+    <h2>System Summary</h2>
+    <div class="info">
+      <div>
+        <h4>Notification System</h4>
+        <p>Send & manage school notices.</p>
+      </div>
+      <div>
+        <h4>Admission Section</h4>
+        <p>Check all online admission entries.</p>
+      </div>
+      <div>
+        <h4>Academic Data</h4>
+        <p>Manage students and teachers records.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+function logout(){
+  localStorage.removeItem("adminLogin");
+  location.href="../login.html";
+}
+</script>
+
+</body>
+</html>

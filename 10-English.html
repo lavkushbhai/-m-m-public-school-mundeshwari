@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline Test | M.M Public School</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#eef2f7}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,#1e88e5,#3949ab);
+  color:#fff;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.title{text-align:center}
+.title h2{margin:0;font-size:17px}
+.title p{margin:4px 0;font-size:13px;opacity:.9}
+
+.info{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:700;
+}
+.timer,.total{
+  background:rgba(255,255,255,.2);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+/* ===== MESSAGE ===== */
+.notice{
+  text-align:center;
+  margin:10px;
+  font-weight:800;
+  color:#e53935;
+  display:none;
+}
+
+/* ===== PROGRESS ===== */
+.progress{height:6px;background:#c5cae9}
+.progress span{
+  display:block;height:100%;width:0%;
+  background:#43a047;transition:.3s;
+}
+
+/* ===== CONTAINER ===== */
+.container{max-width:520px;margin:auto;padding:16px}
+
+/* ===== QUESTION CARD ===== */
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-top:18px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+}
+.q-no{color:#e53935;font-weight:900}
+.q-text{margin:12px 0;font-size:16px;font-weight:700;color:#1e88e5}
+
+/* ===== OPTIONS ===== */
+.option{
+  display:flex;align-items:center;gap:10px;
+  padding:14px;margin-bottom:12px;
+  border-radius:16px;background:#f4f6fb;
+  cursor:pointer;border:2px solid transparent;
+}
+.option input{accent-color:#1e88e5}
+.option.active{
+  background:#e3f2fd;
+  border-color:#1e88e5;
+  box-shadow:0 6px 18px rgba(30,136,229,.35);
+}
+
+/* ===== BUTTONS ===== */
+.btn-row{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.preview{background:#1e88e5;color:#fff}
+.next{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+
+/* ===== RESULT ===== */
+.result{display:none;margin-top:20px}
+.result-card{
+  background:#fff;border-radius:26px;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+.result-card h3{text-align:center;color:#1e88e5}
+
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.status-box{
+  padding:14px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+}
+.correct{background:#43a047}
+.wrong{background:#e53935}
+.time{background:#fb8c00}
+.totalq{background:#3949ab}
+
+.grade{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:18px 0;
+  color:#2e7d32;
+}
+.school{text-align:center;font-size:13px;color:#555}
+
+.result-btns{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+.back{
+  flex:1;
+  background:#e53935;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+.restart{
+  flex:1;
+  background:#2e7d32;
+  color:#fff;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="title">
+      <h2>M.M Public School Mundeshwari</h2>
+      <p>Class 10th – English (Offline Test)</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="timer" id="timer">⏱ 30:00</div>
+    <div class="total">Q <span id="count">1</span> / 50</div>
+  </div>
+</div>
+
+<div class="notice" id="notice">Select your question answer</div>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="container">
+
+<div class="card" id="quizBox">
+  <div class="q-no" id="qNo"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="options"></div>
+
+  <div class="btn-row">
+    <button class="btn preview" onclick="prevQuestion()">⬅ Preview</button>
+    <button class="btn next" onclick="nextQuestion()">Next ➡</button>
+  </div>
+</div>
+
+<div class="result" id="resultBox">
+  <div class="result-card">
+    <h3>Test Status</h3>
+
+    <div class="status-grid">
+      <div class="status-box totalq">Total<br>50</div>
+      <div class="status-box correct">Correct<br><span id="correctSpan"></span></div>
+      <div class="status-box wrong">Wrong<br><span id="wrong"></span></div>
+      <div class="status-box time">Time<br><span id="timeTaken"></span></div>
+    </div>
+
+    <div class="grade" id="grade"></div>
+    <div class="school">M.M Public School Mundeshwari</div>
+
+    <div class="result-btns">
+      <!-- ✅ सिर्फ यही बदला गया है -->
+      <button class="restart" onclick="goBack()">⬅ Back</button>
+      <button class="restart" onclick="location.reload()">Restart</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+// A Letter to God (1–5)
+{ q:"Who wrote 'A Letter to God'?", o:["G.L. Fuentes","Ruskin Bond","Premchand","R.K. Narayan"], a:0 },
+{ q:"Lencho was a —", o:["Teacher","Farmer","Postman","Priest"], a:1 },
+{ q:"What destroyed Lencho’s crops?", o:["Flood","Hailstorm","Fire","Drought"], a:1 },
+{ q:"Lencho had faith in —", o:["Money","God","Nature","Postman"], a:1 },
+{ q:"How much money did Lencho ask for?", o:["50","70","100","150"], a:2 },
+
+// Nelson Mandela (6–10)
+{ q:"Who wrote 'Long Walk to Freedom'?", o:["Nelson Mandela","Gandhi","Nehru","Tagore"], a:0 },
+{ q:"Apartheid means —", o:["Equality","Racial discrimination","Freedom","Peace"], a:1 },
+{ q:"Mandela became President in —", o:["1990","1992","1994","1996"], a:2 },
+{ q:"Mandela spent years in prison —", o:["18","22","25","27"], a:3 },
+{ q:"True courage means —", o:["No fear","Victory over fear","Strength","Power"], a:1 },
+
+// Dust of Snow (11–13)
+{ q:"Who wrote 'Dust of Snow'?", o:["Robert Frost","Wordsworth","Keats","Shelley"], a:0 },
+{ q:"What fell on the poet?", o:["Leaves","Snow","Rain","Dust"], a:1 },
+{ q:"Name of the tree?", o:["Oak","Birch","Hemlock","Pine"], a:2 },
+
+// Fire and Ice (14–16)
+{ q:"Who wrote 'Fire and Ice'?", o:["Robert Frost","T.S. Eliot","Keats","Tagore"], a:0 },
+{ q:"Fire symbolises —", o:["Love","Desire","Anger","Peace"], a:1 },
+{ q:"Ice symbolises —", o:["Hate","Fear","Cold","Anger"], a:0 },
+
+// A Tiger in the Zoo (17–20)
+{ q:"Who wrote 'A Tiger in the Zoo'?", o:["Leslie Norris","Carolyn Wells","Frost","Keats"], a:0 },
+{ q:"Where is the tiger?", o:["Forest","Zoo","Cage","Village"], a:2 },
+{ q:"Tiger hears —", o:["Visitors","Cars","Patrolling cars","Birds"], a:2 },
+{ q:"The poem shows contrast between —", o:["Zoo & Jungle","Day & Night","Man & Animal","Life & Death"], a:0 },
+
+// Two Stories About Flying (21–25)
+{ q:"Who wrote 'His First Flight'?", o:["Liam O’Flaherty","Ruskin Bond","Forsyth","Frost"], a:0 },
+{ q:"The young seagull was afraid of —", o:["Flying","Water","People","Wind"], a:0 },
+{ q:"Who tempted the seagull with food?", o:["Father","Mother","Brother","Sister"], a:1 },
+{ q:"What forced the seagull to fly?", o:["Fear","Hunger","Wind","Anger"], a:1 },
+{ q:"He flew because of —", o:["Courage","Hunger","Fear","Wind"], a:1 },
+
+// The Black Aeroplane (26–30)
+{ q:"Who wrote 'The Black Aeroplane'?", o:["Frederick Forsyth","Ruskin Bond","O’Flaherty","Tagore"], a:0 },
+{ q:"The pilot was flying from —", o:["Paris to London","London to Paris","Paris to Rome","Rome to Paris"], a:0 },
+{ q:"The storm clouds were —", o:["Black","White","Grey","Blue"], a:0 },
+{ q:"Who helped the pilot?", o:["Woman","Man","Another pilot","No one"], a:2 },
+{ q:"The mysterious pilot disappeared at —", o:["Airport","Runway","Control room","Sky"], a:3 },
+
+// Anne Frank (31–35)
+{ q:"Who wrote 'Diary of Anne Frank'?", o:["Anne Frank","Helen Keller","Anne Sullivan","Jane Austen"], a:0 },
+{ q:"Anne named her diary —", o:["Kitty","Lucy","Anne","Mary"], a:0 },
+{ q:"Anne lived in —", o:["Germany","England","Netherlands","France"], a:2 },
+{ q:"Anne was afraid of —", o:["Teachers","Exams","Loneliness","Silence"], a:2 },
+{ q:"Diary was Anne’s —", o:["Teacher","Friend","Book","Story"], a:1 },
+
+// The Hundred Dresses (36–40)
+{ q:"Who wrote 'The Hundred Dresses'?", o:["Eleanor Estes","Helen Keller","Carolyn Wells","Anne Frank"], a:0 },
+{ q:"Main character was —", o:["Peggy","Maddie","Wanda","Anne"], a:2 },
+{ q:"Why was Wanda teased?", o:["Name","Dresses","Shoes","Looks"], a:1 },
+{ q:"Wanda lived in —", o:["City","Big house","Boggin Heights","School"], a:2 },
+{ q:"Story teaches lesson of —", o:["Kindness","Honesty","Pride","Courage"], a:0 },
+
+// Footprints Without Feet (41–50)
+{ q:"Who wrote 'Footprints Without Feet'?", o:["H.G. Wells","Ruskin Bond","Mark Twain","Dickens"], a:0 },
+{ q:"Invisible man was —", o:["Griffin","James","Henry","Oliver"], a:0 },
+{ q:"Griffin was a —", o:["Doctor","Scientist","Teacher","Engineer"], a:1 },
+{ q:"Why did Griffin turn invisible?", o:["Magic","Experiment","Curse","Medicine"], a:1 },
+{ q:"Griffin stole —", o:["Money","Clothes","Food","Books"], a:1 },
+{ q:"Griffin was —", o:["Kind","Helpful","Cruel","Polite"], a:2 },
+{ q:"People were afraid of Griffin because —", o:["He was poor","He was invisible","He was mad","He was thief"], a:1 },
+{ q:"Griffin’s power became —", o:["Blessing","Problem","Gift","Reward"], a:1 },
+{ q:"Griffin finally became —", o:["Hero","Famous","Homeless","Powerful"], a:2 },
+{ q:"The story shows misuse of —", o:["Power","Money","Knowledge","Science"], a:3 }
+];
+
+let index=0,correct=0,answers=[],started=true;
+
+function loadQuestion(){
+  qNo.innerText="Q. "+(index+1);
+  qText.innerText=questions[index].q;
+  count.innerText=index+1;
+  bar.style.width=((index+1)/50*100)+"%";
+  options.innerHTML="";
+  notice.style.display="none";
+
+  questions[index].o.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    const checked = answers[index]===i ? "checked" : "";
+    if(answers[index]===i)d.classList.add("active");
+
+    d.innerHTML=`
+      <input type="checkbox" ${checked}>
+      <span>${t}</span>
+    `;
+
+    d.onclick=()=>{
+      document.querySelectorAll(".option").forEach(x=>{
+        x.classList.remove("active");
+        x.querySelector("input").checked=false;
+      });
+      d.classList.add("active");
+      d.querySelector("input").checked=true;
+      answers[index]=i;
+    };
+    options.appendChild(d);
+  });
+}
+
+function nextQuestion(){
+  if(answers[index]===undefined){
+    notice.style.display="block";
+    return;
+  }
+  if(answers[index]===questions[index].a)correct++;
+  index++;
+  if(index<questions.length)loadQuestion();
+  else finish();
+}
+
+function prevQuestion(){
+  if(index>0){index--;loadQuestion();}
+}
+
+function finish(){
+  quizBox.style.display="none";
+  resultBox.style.display="block";
+  correctSpan.innerText=correct;
+  wrong.innerText=50-correct;
+  timeTaken.innerText=(30-min)+":"+sec;
+  grade.innerText=
+    correct>=45?"A+ Excellent":
+    correct>=35?"A Very Good":
+    correct>=25?"B Good":"Needs Practice";
+}
+
+let min=30,sec=0;
+setInterval(()=>{
+  if(min===0&&sec===0)finish();
+  else{
+    if(sec===0){min--;sec=59}else sec--;
+    timer.innerText="⏱ "+String(min).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  }
+},1000);
+
+loadQuestion();
+function goBack() {
+  window.location.replace("offline-test.html");
+}
+</script>
+
+</body>
+</html>
